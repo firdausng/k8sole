@@ -1,0 +1,10 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
+global using k8s;
+global using AppCore.Services.K8s.Models;
+global using k8s.KubeConfigModels;
+global using k8s.Models;
+global using Microsoft.Extensions.Logging;
