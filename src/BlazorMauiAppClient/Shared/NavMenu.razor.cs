@@ -1,18 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using BlazorMauiAppClient;
-using BlazorMauiAppClient.Shared;
 using AppCore.Services.K8s;
-using k8s.Models;
 using AppCore.Services.K8s.Models;
 
 namespace BlazorMauiAppClient.Shared
@@ -21,6 +11,7 @@ namespace BlazorMauiAppClient.Shared
     {
         private bool collapseNavMenu = true;
         private Dictionary<string, K8SContextClient> _k8sContextList;
+        private string _title = "Namespace";
 
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
         private void ToggleNavMenu()
@@ -30,6 +21,7 @@ namespace BlazorMauiAppClient.Shared
 
         [Inject]
         public CurrentK8SContext CurrentK8SContextClient { get; set; }
+        
         [Inject]
         public K8sContextService K8SContextService { get; set; }
 
@@ -44,7 +36,8 @@ namespace BlazorMauiAppClient.Shared
 
         private void SetCurrentContext(KeyValuePair<string, K8SContextClient> k8sContextClient)
         {
-
+            CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
+            _title = k8sContextClient.Key;
         }
     }
 }

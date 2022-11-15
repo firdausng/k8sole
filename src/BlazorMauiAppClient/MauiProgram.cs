@@ -1,5 +1,5 @@
 ﻿using AppCore.Extensions;
-using Microsoft.AspNetCore.Components.WebView.Maui;
+using Microsoft.Extensions.Logging;
 
 namespace BlazorMauiAppClient
 {
@@ -18,6 +18,7 @@ namespace BlazorMauiAppClient
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 #endif
 
             builder.Services.AddAppCore(builder.Configuration);

@@ -1,41 +1,7 @@
-﻿@*<div class="top-row ps-3 navbar navbar-dark">
-	<div class="container-fluid">
-		<a class="navbar-brand" href="">BlazorMauiAppClient</a>
-		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-	</div>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-	<nav class="flex-column">
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-				<span class="oi oi-home" aria-hidden="true"></span> Home
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="counter">
-				<span class="oi oi-plus" aria-hidden="true"></span> Counter
-			</NavLink>
-		</div>
-		<div class="nav-item px-3">
-			<NavLink class="nav-link" href="fetchdata">
-				<span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-			</NavLink>
-		</div>
-	</nav>
-</div>*@
-
-<div class="flex-shrink-0 p-3 bg-white" style="width: 280px;">
-    <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-        <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-5 fw-semibold">Collapsible</span>
-    </a>
-    <br />
+﻿<div style="width: 200px;">
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <strong>Namespace</strong>
+            <strong>@_title</strong>
         </a>
         <ul class="dropdown-menu text-small shadow">
             <li><a class="dropdown-item" href="#">All</a></li>
@@ -44,65 +10,66 @@
             {
                 <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)" >@k8sContext.Value.ContextName</button></li>
             }
-            @*     
-           <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>*@
         </ul>
     </div>
     <br />
     <ul class="list-unstyled ps-0">
         <li class="mb-1">
-            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
-                Namespace
-            </button>
-            <div class="collapse" id="home-collapse" style="">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Overview</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Updates</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Reports</a></li>
-                </ul>
-            </div>
-        </li>
-        <li class="mb-1">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
-                Dashboard
+                Workload
             </button>
             <div class="collapse" id="dashboard-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Overview</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Weekly</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Monthly</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Annually</a></li>
+                    <li><NavLink href="" class="link-dark d-inline-flex text-decoration-none rounded">Overview</NavLink></li>
+                    <li><NavLink href="Pods" class="link-dark d-inline-flex text-decoration-none rounded">Pods</NavLink></li>
+                    <li><NavLink href="Deployments" class="link-dark d-inline-flex text-decoration-none rounded">Deployments</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">DaemonSets</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">StatefulSets</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">ReplicaSets</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Jobs</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">CronJobs</NavLink></li>
                 </ul>
             </div>
         </li>
         <li class="mb-1">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
-                Orders
+                Config
             </button>
             <div class="collapse" id="orders-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Processed</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Shipped</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Returned</a></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">ConfigMaps</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Secrets</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Resource Quotas</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Limit Ranges</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">HPA</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Pod Disruption Budgets</NavLink></li>
                 </ul>
             </div>
         </li>
-        <li class="border-top my-3"></li>
+        @*<li class="border-top my-3"></li>*@
         <li class="mb-1">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
-                Account
+                Network
             </button>
             <div class="collapse" id="account-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Profile</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Settings</a></li>
-                    <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Services</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Endpoints</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Ingresses</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Network Policies</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Port Forwarding</NavLink></li>
+                </ul>
+            </div>
+        </li>
+        <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false">
+                Storage
+            </button>
+            <div class="collapse" id="home-collapse" style="">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Persistent Volume Claims</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Persistent Volumes</NavLink></li>
+                    <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Storage Classes</NavLink></li>
                 </ul>
             </div>
         </li>

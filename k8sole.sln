@@ -5,9 +5,9 @@ VisualStudioVersion = 17.4.32912.340
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppCore", "src\AppCore\AppCore.csproj", "{0EC765C0-846E-4161-9CFF-1BE17116714C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MauiAppClient", "src\MauiAppClient\MauiAppClient.csproj", "{291D32DC-F99D-4EB5-8B8F-5BF798D5BD69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorMauiAppClient", "src\BlazorMauiAppClient\BlazorMauiAppClient.csproj", "{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorMauiAppClient", "src\BlazorMauiAppClient\BlazorMauiAppClient.csproj", "{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp", "src\BlazorApp\BlazorApp.csproj", "{1B13188D-BD67-426F-B013-5AFA9D9D37B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,16 +19,16 @@ Global
 		{0EC765C0-846E-4161-9CFF-1BE17116714C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EC765C0-846E-4161-9CFF-1BE17116714C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EC765C0-846E-4161-9CFF-1BE17116714C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{291D32DC-F99D-4EB5-8B8F-5BF798D5BD69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{291D32DC-F99D-4EB5-8B8F-5BF798D5BD69}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{291D32DC-F99D-4EB5-8B8F-5BF798D5BD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{291D32DC-F99D-4EB5-8B8F-5BF798D5BD69}.Release|Any CPU.Build.0 = Release|Any CPU
 		{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}.Release|Any CPU.Build.0 = Release|Any CPU
 		{073E0C8E-6FB7-4A9E-9FDD-9F3C4FB8EB63}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{1B13188D-BD67-426F-B013-5AFA9D9D37B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B13188D-BD67-426F-B013-5AFA9D9D37B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B13188D-BD67-426F-B013-5AFA9D9D37B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B13188D-BD67-426F-B013-5AFA9D9D37B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
