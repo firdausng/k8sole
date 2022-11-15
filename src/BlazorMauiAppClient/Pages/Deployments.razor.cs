@@ -14,6 +14,9 @@ public partial class Deployments
     [Inject]
     public K8sContextService K8SContextService { get; set; }
 
+    [Inject]
+    private NamespaceService _namespaceService { get; set; }
+
     GridSort<DeploymentsPageVm> sortByName = GridSort<DeploymentsPageVm>
         .ByAscending(p => p.Name)
         .ThenAscending(p => p.Namespace);

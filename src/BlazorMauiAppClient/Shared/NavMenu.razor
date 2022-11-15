@@ -1,14 +1,30 @@
-﻿<div style="width: 200px;">
+﻿@using k8s.Models
+<div class="d-flex justify-content-end p-3">
+    <div class="dropdown">
+        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>@(_namespaceService.GetCurrentNamespaceAsync().Result.Name())</strong>
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            @*<li><a class="dropdown-item" href="#">All</a></li>*@
+            @*<li><hr class="dropdown-divider"></li>*@
+            @foreach (var ns in _contextNamespaces)
+            {
+                <li><button class="dropdown-item" @onclick="async()=>await _namespaceService.SetCurrentNamespaceAsync(ns.Name())">@ns.Name()</button></li>
+            }
+        </ul>
+    </div>
+</div>
+<div style="width: 200px;">
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             <strong>@_title</strong>
         </a>
         <ul class="dropdown-menu text-small shadow">
-            <li><a class="dropdown-item" href="#">All</a></li>
+            @*<li><a class="dropdown-item" href="#">All</a></li>*@
             <li><hr class="dropdown-divider"></li>
             @foreach (var k8sContext in _k8sContextList)
             {
-                <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)" >@k8sContext.Value.ContextName</button></li>
+                <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button></li>
             }
         </ul>
     </div>

@@ -11,6 +11,7 @@ public static class DependencyInjectionExtension
         services.AddSingleton<K8sService>();
         services.AddSingleton<K8sContextService>();
         services.AddSingleton<CurrentK8SContext>();
+        services.AddSingleton<NamespaceService>();
 
         return services;
     }

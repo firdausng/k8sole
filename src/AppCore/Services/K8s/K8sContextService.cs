@@ -10,9 +10,4 @@ public class K8sContextService
         _logger = logger;
         _currentK8SContext = currentK8SContext;
     }
-    public async Task<V1NamespaceList> GetAllNamespace()
-    {
-        var list = await _currentK8SContext.Client.Client.CoreV1.ListNamespaceAsync();
-        return list;
-    }
 }
