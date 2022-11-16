@@ -10,15 +10,29 @@ public partial class Deployments
     [Inject]
     public CurrentK8SContext CurrentK8SContextClient { get; set; }
 
-    IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
-    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
-    string namespaceFilter 
+    [Inject]
+    public K8sContextService K8SContextService { get; set; }
+
+    [Inject]
+    private NamespaceService _namespaceService { get; set; }
+
+    GridSort<DeploymentsPageVm> sortByName = GridSort<DeploymentsPageVm>
+        .ByAscending(p => p.Name)
+        .ThenAscending(p => p.Namespace);
+
+    IQueryable<DeploymentsPageVm> people = new[]
     {
-        get
-        {
-            return CurrentK8SContextClient.NamespaceFilter;
-        }
-        set
+        new DeploymentsPageVm("Name1", "Namespace1", 1, 2, "ControlledBy", "Node", "QoS", "Age", "Status"),
+    }.AsQueryable();
+    private List<V1Pod> _podlist = new();
+
+    GridItemsProvider<V1Pod>? _podProvider;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var sss = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(CurrentK8SContextClient.ActiveNamespace.Name());
+
+        if (sss != null)
         {
             CurrentK8SContextClient.NamespaceFilter = value;
         } 

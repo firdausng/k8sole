@@ -6,7 +6,5 @@ public class CurrentK8SContext
 {
     public K8SContextClient Client { get; set; }
 
-    public List<string> ActiveNamespaceList { get; set; } = new();
-
-    public string NamespaceFilter { get; set; } = string.Empty;
+    public V1Namespace ActiveNamespace { get; set; }
 }
