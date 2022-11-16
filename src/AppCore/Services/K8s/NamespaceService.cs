@@ -20,12 +20,19 @@ public class NamespaceService
         _currentK8SContext.Client!.Client!.CoreV1.DeleteNamespaceAsync(namespaceName, deleteOption ?? new V1DeleteOptions()).ConfigureAwait(false);
     }
 
-    public async Task SetCurrentNamespaceAsync(string name)
+    public async Task AddCurrentNamespaceAsync(string name)
     {
-        _currentK8SContext.ActiveNamespace = await _currentK8SContext.Client!.Client!.CoreV1.ReadNamespaceAsync(name).ConfigureAwait(false);
+        var k8sNamespace = await _currentK8SContext.Client!.Client!.CoreV1.ReadNamespaceAsync(name).ConfigureAwait(false);
+        _currentK8SContext.ActiveNamespaceList.Add(k8sNamespace);
     }
-    public Task<V1Namespace> GetCurrentNamespaceAsync()
+
+    public void ClearCurrentNamespaces()
     {
-        return Task.FromResult(_currentK8SContext.ActiveNamespace);
+        _currentK8SContext.ActiveNamespaceList = new List<V1Namespace>();
+    }
+
+    public Task<List<V1Namespace>> GetCurrentNamespaceListAsync()
+    {
+        return Task.FromResult(_currentK8SContext.ActiveNamespaceList);
     }
 }

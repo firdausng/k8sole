@@ -35,6 +35,7 @@ namespace BlazorMauiAppClient.Shared
 
         private readonly string _allNamespaceTitle = "All";
 
+        private string _currentNamespaceList = string.Empty;
 
         protected override async Task OnInitializedAsync()
         {
@@ -43,14 +44,32 @@ namespace BlazorMauiAppClient.Shared
             {
                 await SetCurrentContext(_k8sContextList.First());
             }
+            var list = await _namespaceService.GetCurrentNamespaceListAsync();
+            _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
         }
 
         private async Task SetCurrentContext(KeyValuePair<string, K8SContextClient> k8sContextClient)
         {
             CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
             _title = k8sContextClient.Key;
-            await _namespaceService.SetCurrentNamespaceAsync("default");
+            await _namespaceService.AddCurrentNamespaceAsync("default");
             _contextNamespaces = await _namespaceService.GetAllAsync();
+        }
+
+        private async Task UpdateCurrentNamespace(string name)
+        {
+            await _namespaceService.AddCurrentNamespaceAsync(name);
+            var list = await _namespaceService.GetCurrentNamespaceListAsync();
+            _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
+            StateHasChanged();
+        }
+
+        private async Task ClearCurrentNamespace()
+        {
+            _namespaceService.ClearCurrentNamespaces();
+            var list = await _namespaceService.GetCurrentNamespaceListAsync();
+            _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
+            StateHasChanged();
         }
     }
 }

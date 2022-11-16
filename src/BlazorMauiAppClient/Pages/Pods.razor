@@ -12,7 +12,7 @@
                 <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
                     <ColumnOptions>
                         <div class="search-box">
-                            <input type="search" autofocus @bind="namespaceFilter" @bind:event="oninput" placeholder="pod name..." />
+                            <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
                         </div>
                     </ColumnOptions>
                 </PropertyColumn>

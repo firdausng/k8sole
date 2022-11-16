@@ -3,6 +3,7 @@ using k8s;
 using k8s.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BlazorMauiAppClient.Pages;
 public partial class Deployments
@@ -10,41 +11,31 @@ public partial class Deployments
     [Inject]
     public CurrentK8SContext CurrentK8SContextClient { get; set; }
 
-    [Inject]
-    public K8sContextService K8SContextService { get; set; }
+    IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
+    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
 
-    [Inject]
-    private NamespaceService _namespaceService { get; set; }
-
-    GridSort<DeploymentsPageVm> sortByName = GridSort<DeploymentsPageVm>
-        .ByAscending(p => p.Name)
-        .ThenAscending(p => p.Namespace);
-
-    IQueryable<DeploymentsPageVm> people = new[]
-    {
-        new DeploymentsPageVm("Name1", "Namespace1", 1, 2, "ControlledBy", "Node", "QoS", "Age", "Status"),
-    }.AsQueryable();
-    private List<V1Pod> _podlist = new();
-
-    GridItemsProvider<V1Pod>? _podProvider;
+    IQueryable<V1Deployment>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
     protected override async Task OnInitializedAsync()
     {
-        var sss = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(CurrentK8SContextClient.ActiveNamespace.Name());
+        //var podlist = await CurrentK8SContextClient.Client.Client.ListDeploymentForAllNamespacesAsync();
+        //items = podlist.Items.AsQueryable();
 
-        if (sss != null)
+        if (CurrentK8SContextClient.ActiveNamespaceList.IsNullOrEmpty())
         {
-            CurrentK8SContextClient.NamespaceFilter = value;
-        } 
-    
-    }
-
-    IQueryable<V1Deployment>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(namespaceFilter, StringComparison.CurrentCultureIgnoreCase));
-
-    protected override async Task OnInitializedAsync()
-    {
-        var podlist = await CurrentK8SContextClient.Client.Client.ListNamespacedDeploymentAsync("");
-        items = podlist.Items.AsQueryable();
+            var podlist = await CurrentK8SContextClient.Client.Client.ListDeploymentForAllNamespacesAsync();
+            items = podlist.Items.AsQueryable();
+        }
+        else
+        {
+            var list = new List<V1Deployment>();
+            foreach (var k8sNamespace in CurrentK8SContextClient.ActiveNamespaceList)
+            {
+                var podlist = await CurrentK8SContextClient.Client.Client.ListNamespacedDeploymentAsync(k8sNamespace.Name());
+                list.AddRange(podlist.Items);
+            }
+            items = list.AsQueryable();
+        }
     }
 }
 
