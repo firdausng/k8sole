@@ -18,6 +18,54 @@
                 </PropertyColumn>
                 <PropertyColumn Title="Container" Property="@(c => c.Spec.Containers.Count)" Sortable="true" />
                 <PropertyColumn Title="Controlled By" Property="@(c => c.Metadata.OwnerReferences.First().Kind)" Sortable="true" />
+                <TemplateColumn Title="Actions">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
+
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Attach Pods</button></li>
+                                <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Shell</button></li>
+                                <li><button @onclick="@(async ()=> await ShowPodLogsAsync(context))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Logs</button></li>
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <DetailSection DetailsData=@DetailsData DetailsTitle="Pods Detail" />
+
+                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+                        <div class="offcanvas-header">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <button class="nav-link active" aria-current="page">Logs</button>
+                                </li>
+                                @*<li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Link</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                                </li>*@
+                            </ul>
+                        </div>
+                        <div class="offcanvas-body small">
+                            @if (_logReader is not null)
+                            {
+
+                                <p>@(() => _logReader.ReadToEnd())</p>
+                            }
+                            
+
+                        </div>
+                    </div>
+
+                </TemplateColumn>
             </QuickGrid>
         </div>
         <Paginator Value="@pagination" />

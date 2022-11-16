@@ -1,7 +1,7 @@
 ﻿@page "/Deployments"
-
+<PageTitle>Test</PageTitle>
 <div class="container w-75">
-    <h2 class="col-12">Deployments</h2>
+    <h2 class="col-9">Deployments</h2>
     <div class="col-12 vh-100">
 
         <div class="grid">
@@ -20,6 +20,26 @@
                 </PropertyColumn>
                 <PropertyColumn Title="Replicas" Property="@(c => c.Spec.Replicas.Value)" Sortable="true" />
                 <PropertyColumn Title="Conditions" Property="@(c => c.Status.Conditions.Count)" Sortable="true" />
+                <TemplateColumn Title="Actions">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
+
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">Scale</a></li>
+                                <li><a class="dropdown-item" href="#">Restart</a></li>
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <DetailSection DetailsData=@DetailsData DetailsTitle="Deployment Detail"/>
+                    
+                    @*<button @onclick="@(() => Fire(context))">Fire</button>*@
+                </TemplateColumn>
             </QuickGrid>
         </div>
         <Paginator Value="@pagination" />

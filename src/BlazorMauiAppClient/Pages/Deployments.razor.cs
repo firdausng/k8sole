@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace BlazorMauiAppClient.Pages;
 public partial class Deployments
 {
+    List<KeyValuePair<string, string>> DetailsData = new();
+
     [Inject]
     public CurrentK8SContext CurrentK8SContextClient { get; set; }
 
@@ -44,6 +46,17 @@ public partial class Deployments
             }
             items = list.AsQueryable();
         }
+    }
+
+    public void ShowDetail(V1Deployment deployment)
+    {
+        DetailsData.Add(new KeyValuePair<string, string>("Name", deployment.Name()));
+        DetailsData.Add(new KeyValuePair<string, string>("Namespace", deployment.Namespace()));
+        DetailsData.Add(new KeyValuePair<string, string>("Kind", deployment.Kind));
+        DetailsData.Add(new KeyValuePair<string, string>("ApiGroup", deployment.ApiGroup()));
+        DetailsData.Add(new KeyValuePair<string, string>("ApiVersion", deployment.ApiVersion));
+        DetailsData.Add(new KeyValuePair<string, string>("CreationTimestamp", deployment.CreationTimestamp().ToString()));
+        DetailsData.Add(new KeyValuePair<string, string>("DeletionTimestamp", deployment.DeletionTimestamp().ToString()));
     }
 }
 
