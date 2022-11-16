@@ -18,6 +18,18 @@ public partial class Pods
 
     protected override async Task OnInitializedAsync()
     {
+        await Setup();
+
+        CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
+        {
+            await Setup();
+            _ = InvokeAsync(() => StateHasChanged());
+        };
+
+    }
+
+    public async Task Setup()
+    {
         if (CurrentK8SContextClient.ActiveNamespaceList.IsNullOrEmpty())
         {
             var podlist = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync("");
@@ -33,6 +45,5 @@ public partial class Pods
             }
             items = list.AsQueryable();
         }
-        
     }
 }

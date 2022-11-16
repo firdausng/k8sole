@@ -2,7 +2,7 @@
 <div class="d-flex justify-content-end p-3">
     <div class="dropdown">
         <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <strong>@_currentNamespaceList</strong>
+            <strong>@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)</strong>
         </a>
         <ul class="dropdown-menu text-small shadow">
             <li><a class="dropdown-item" href="#" @onclick="async()=>await ClearCurrentNamespace()">All</a></li>

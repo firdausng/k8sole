@@ -46,13 +46,13 @@ namespace BlazorMauiAppClient.Shared
             }
             var list = await _namespaceService.GetCurrentNamespaceListAsync();
             _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
+            
         }
 
         private async Task SetCurrentContext(KeyValuePair<string, K8SContextClient> k8sContextClient)
         {
             CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
             _title = k8sContextClient.Key;
-            await _namespaceService.AddCurrentNamespaceAsync("default");
             _contextNamespaces = await _namespaceService.GetAllAsync();
         }
 

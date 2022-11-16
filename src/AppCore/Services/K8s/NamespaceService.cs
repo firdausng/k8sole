@@ -23,15 +23,15 @@ public class NamespaceService
     public async Task AddCurrentNamespaceAsync(string name)
     {
         var k8sNamespace = await _currentK8SContext.Client!.Client!.CoreV1.ReadNamespaceAsync(name).ConfigureAwait(false);
-        _currentK8SContext.ActiveNamespaceList.Add(k8sNamespace);
+        _currentK8SContext.AddActiveNamespace(k8sNamespace);
     }
 
     public void ClearCurrentNamespaces()
     {
-        _currentK8SContext.ActiveNamespaceList = new List<V1Namespace>();
+        _currentK8SContext.ClearActiveNamespace();
     }
 
-    public Task<List<V1Namespace>> GetCurrentNamespaceListAsync()
+    public Task<IReadOnlyList<V1Namespace>> GetCurrentNamespaceListAsync()
     {
         return Task.FromResult(_currentK8SContext.ActiveNamespaceList);
     }
