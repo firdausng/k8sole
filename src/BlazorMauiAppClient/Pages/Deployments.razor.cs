@@ -31,7 +31,8 @@ public partial class Deployments
 
     protected override async Task OnInitializedAsync()
     {
-        var sss = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync("sitecore-backbone-agent-configuration-api-dev");
+        var sss = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(CurrentK8SContextClient.ActiveNamespace.Name());
+
         if (sss != null)
         {
             _podlist.AddRange(sss.Items);

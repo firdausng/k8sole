@@ -5,8 +5,8 @@
             <strong>@(_namespaceService.GetCurrentNamespaceAsync().Result.Name())</strong>
         </a>
         <ul class="dropdown-menu text-small shadow">
-            @*<li><a class="dropdown-item" href="#">All</a></li>*@
-            @*<li><hr class="dropdown-divider"></li>*@
+            <li><a class="dropdown-item" href="#" @onclick="async()=>await _namespaceService.SetCurrentNamespaceAsync(string.Empty)">All</a></li>
+            <li><hr class="dropdown-divider"></li>
             @foreach (var ns in _contextNamespaces)
             {
                 <li><button class="dropdown-item" @onclick="async()=>await _namespaceService.SetCurrentNamespaceAsync(ns.Name())">@ns.Name()</button></li>
