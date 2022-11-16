@@ -1,4 +1,29 @@
 ﻿@page "/Pods"
-<h3>Pods</h3>
+
+<div class="container w-75">
+    <h2 class="col-12">Pods</h2>
+    <div class="col-12 vh-100">
+
+        <div class="grid">
+            <QuickGrid Items="@FilteredItems"
+                       ResizableColumns="true"
+                       Pagination="@pagination">
+                <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
+                <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
+                    <ColumnOptions>
+                        <div class="search-box">
+                            <input type="search" autofocus @bind="namespaceFilter" @bind:event="oninput" placeholder="pod name..." />
+                        </div>
+                    </ColumnOptions>
+                </PropertyColumn>
+                <PropertyColumn Title="Container" Property="@(c => c.Spec.Containers.Count)" Sortable="true" />
+                <PropertyColumn Title="Controlled By" Property="@(c => c.Metadata.OwnerReferences.First().Kind)" Sortable="true" />
+            </QuickGrid>
+        </div>
+        <Paginator Value="@pagination" />
+
+    </div>
+
+</div>
 
 

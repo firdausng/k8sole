@@ -2,7 +2,7 @@
 
 public record K8SContextClient(string ContextName)
 {
-    public IKubernetes? Client { get; set; }
+    public Kubernetes? Client { get; set; }
     public K8SContextStatus? Status { get; set; } = K8SContextStatus.DISCONNECTED;
 }
 

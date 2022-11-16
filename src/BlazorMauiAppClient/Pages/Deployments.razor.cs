@@ -3,7 +3,6 @@ using k8s;
 using k8s.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
-using System.Reflection;
 
 namespace BlazorMauiAppClient.Pages;
 public partial class Deployments
@@ -11,39 +10,27 @@ public partial class Deployments
     [Inject]
     public CurrentK8SContext CurrentK8SContextClient { get; set; }
 
-    [Inject]
-    public K8sContextService K8SContextService { get; set; }
-
-    GridSort<DeploymentsPageVm> sortByName = GridSort<DeploymentsPageVm>
-        .ByAscending(p => p.Name)
-        .ThenAscending(p => p.Namespace);
-
-    IQueryable<DeploymentsPageVm> people = new[]
+    IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
+    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+    string namespaceFilter 
     {
-        new DeploymentsPageVm("Name1", "Namespace1", 1, 2, "ControlledBy", "Node", "QoS", "Age", "Status"),
-    }.AsQueryable();
-    private List<V1Pod> _podlist = new();
+        get
+        {
+            return CurrentK8SContextClient.NamespaceFilter;
+        }
+        set
+        {
+            CurrentK8SContextClient.NamespaceFilter = value;
+        } 
+    
+    }
 
-    GridItemsProvider<V1Pod>? _podProvider;
+    IQueryable<V1Deployment>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(namespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
     protected override async Task OnInitializedAsync()
     {
-        var sss = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync("sitecore-backbone-agent-configuration-api-dev");
-        if (sss != null)
-        {
-            _podlist.AddRange(sss.Items);
-            StateHasChanged();
-        }
-
-        //_podProvider = async req =>
-        //{
-        //    var sss = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync("default");
-        //    return GridItemsProviderResult.From(
-        //        items: sss!.Items,
-        //        totalItemCount: sss!.Items.Count);
-        //};
-
-
+        var podlist = await CurrentK8SContextClient.Client.Client.ListNamespacedDeploymentAsync("");
+        items = podlist.Items.AsQueryable();
     }
 }
 

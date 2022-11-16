@@ -40,7 +40,7 @@ public class K8sService
             if (_k8SContextClientList[contextName].Client is null)
             {
                 var config = KubernetesClientConfiguration.BuildConfigFromConfigObject(_kubeConfig, contextName);
-                IKubernetes client = new Kubernetes(config);
+                var client = new Kubernetes(config);
                 _k8SContextClientList[contextName].Client = client;
                 _k8SContextClientList[contextName].Status = K8SContextStatus.CONNECTED;
             }

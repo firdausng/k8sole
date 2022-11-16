@@ -50,6 +50,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Pages\Deployments.razor.css" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Pages\Deployments.razor.css" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\AppCore\AppCore.csproj" />
     </ItemGroup>
 
