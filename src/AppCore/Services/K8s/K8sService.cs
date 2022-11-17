@@ -4,6 +4,8 @@ public class K8sService
 	private readonly ILogger<K8sService> _logger;
 	private readonly K8SConfiguration _kubeConfig;
 	private Dictionary<string, K8SContextClient> _k8SContextClientList = new Dictionary<string, K8SContextClient>();
+    
+    public event EventHandler ActiveK8sContextChanged;
 
     public K8sService(ILogger<K8sService> logger)
 	{
@@ -29,31 +31,23 @@ public class K8sService
     }
 
     public K8SContextClient? GetK8sContext(string contextName)
-	{
-        try
+    {
+        if (_k8SContextClientList.ContainsKey(contextName) is false)
         {
-            if (_k8SContextClientList.ContainsKey(contextName) is false)
-            {
-                _k8SContextClientList.Add(contextName, new K8SContextClient(contextName));
-            }
-
-            if (_k8SContextClientList[contextName].Client is null)
-            {
-                var config = KubernetesClientConfiguration.BuildConfigFromConfigObject(_kubeConfig, contextName);
-                var client = new Kubernetes(config);
-                _k8SContextClientList[contextName].Client = client;
-                _k8SContextClientList[contextName].Status = K8SContextStatus.CONNECTED;
-            }
-
-            return _k8SContextClientList[contextName];
+            _k8SContextClientList.Add(contextName, new K8SContextClient(contextName));
         }
-        catch (Exception e)
+
+        if (_k8SContextClientList[contextName].Client is null)
         {
-
-            throw;
+            var config = KubernetesClientConfiguration.BuildConfigFromConfigObject(_kubeConfig, contextName);
+            var client = new Kubernetes(config);
+            _k8SContextClientList[contextName].Client = client;
+            _k8SContextClientList[contextName].Status = K8SContextStatus.CONNECTED;
+            
         }
-        
+
+        ActiveK8sContextChanged?.Invoke(this, EventArgs.Empty);
+
+        return _k8SContextClientList[contextName];
     }
-
-    
 }

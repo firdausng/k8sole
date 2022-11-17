@@ -10,6 +10,7 @@ public class CurrentK8SContext
     public IReadOnlyList<V1Namespace> ActiveNamespaceList  => _activeNamespaceList;
 
     public event EventHandler ActiveNamespaceChanged;
+    
     public string NamespaceFilter { get; set; } = string.Empty;
 
     public void AddActiveNamespace(V1Namespace @namespace)
