@@ -1,4 +1,5 @@
 ﻿@page "/Pods"
+@using Microsoft.IdentityModel.Tokens
 
 <div class="container w-75">
     <h2 class="col-12">Pods</h2>
@@ -55,13 +56,13 @@
                             </ul>
                         </div>
                         <div class="offcanvas-body small">
-                            @if (_logReader is not null)
-                            {
-
-                                <p>@(() => _logReader.ReadToEnd())</p>
-                            }
-                            
-
+                           @if (!_podLogs.IsNullOrEmpty())
+                           {
+                               @foreach (var log in _podLogs)
+                               {
+                                   <pre>@log</pre>
+                               }
+                           }
                         </div>
                     </div>
 

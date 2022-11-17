@@ -32,11 +32,13 @@ public partial class Pods
         await Setup();
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
-        {
-            await Setup();
-            _ = InvokeAsync(() => StateHasChanged());
+        {           
+            _ = InvokeAsync(async () =>
+            {
+                await Setup();
+                StateHasChanged();
+            });
         };
-
     }
 
     public async Task Setup()
@@ -71,23 +73,23 @@ public partial class Pods
 
     public async Task ShowPodLogsAsync(V1Pod pod)
     {
+        _podLogs = new();
         var response = await CurrentK8SContextClient.Client.Client.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(
                 pod.Metadata.Name,
-                pod.Metadata.NamespaceProperty, container: pod.Spec.Containers[0].Name, follow: false, sinceSeconds: 100_000).ConfigureAwait(false);
-        var stream = response.Body;
-        //_podLogsStream = stream;
-        // stream.CopyTo(Console.OpenStandardOutput());
+                pod.Metadata.NamespaceProperty, container: pod.Spec.Containers[0].Name, follow: true, sinceSeconds: 50_000, timestamps: true).ConfigureAwait(false);
+        _logReader = new StreamReader(response.Body);
+        var line = string.Empty;
+        _ = InvokeAsync(async () =>
+        {
+            
+            while ((line = await _logReader.ReadLineAsync()) != null)
+            {
+                _podLogs.Add(line);
+                // Update the UI
+                StateHasChanged();
+            }
+        });
+        
 
-        //using var streamRef = new DotNetStreamReference(stream: stream);
-
-        //await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
-        _logReader = new StreamReader(stream);
-        //string text = reader.ReadLine();
-        //_podLogs = text;
-
-
-        //while ((_podLogs = reader.ReadLine()) != null)
-        //{
-        //}
     }
 }
