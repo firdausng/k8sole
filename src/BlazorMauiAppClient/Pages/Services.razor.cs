@@ -153,21 +153,21 @@ public class ServicePortVm
         TargetPort = servicePort.TargetPort.ToString();
         NodePort = servicePort.NodePort.ToString();
         Protocol = servicePort.Protocol;
-        AppProtocol = servicePort.AppProtocol;
+        Name = servicePort.Name;
     }
     public string Port { get; set; }
     public string TargetPort { get; set; }
     public string NodePort { get; set; }
     public string Protocol { get; set; }
-    public string AppProtocol { get; set; }
+    public string Name { get; set; }
 
     public string ToSummary()
     {
-        return Port + ":" + AppProtocol + "/" + Protocol;
+        return Port + ":" + Name + "/" + Protocol;
     }
     public override string ToString()
     {
-        return Port + ":" + AppProtocol + "/" + Protocol + "->" + TargetPort;
+        return Port + ":" + Name + "/" + Protocol + "->" + TargetPort;
     }
 }
 
