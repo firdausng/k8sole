@@ -12,6 +12,8 @@ public partial class Deployments
 
     [Inject]
     public CurrentK8SContext CurrentK8SContextClient { get; set; }
+    [Inject]
+    public K8sService K8sService { get; set; }
 
     IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
     PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
@@ -26,6 +28,15 @@ public partial class Deployments
         {
             await Setup();
             _ = InvokeAsync(()=> StateHasChanged());
+        };
+
+        K8sService.ActiveK8sContextChanged += async (s, e) =>
+        {
+            _ = InvokeAsync(async () =>
+            {
+                await Setup();
+                StateHasChanged();
+            });
         };
     }
 

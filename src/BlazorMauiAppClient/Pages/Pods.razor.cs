@@ -5,7 +5,6 @@ using k8s.Models;
 using k8s;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
-using Microsoft.Maui.Controls.Shapes;
 
 namespace BlazorMauiAppClient.Pages;
 public partial class Pods
@@ -21,6 +20,9 @@ public partial class Pods
     [Inject]
     public IJSRuntime JS { get; set; }
 
+    [Inject]
+    public K8sService K8sService { get; set; }
+
     IQueryable<V1Pod>? items = Enumerable.Empty<V1Pod>().AsQueryable();
     PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
     private StreamReader _logReader;
@@ -33,6 +35,15 @@ public partial class Pods
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {           
+            _ = InvokeAsync(async () =>
+            {
+                await Setup();
+                StateHasChanged();
+            });
+        };
+
+        K8sService.ActiveK8sContextChanged += async (s, e) =>
+        {
             _ = InvokeAsync(async () =>
             {
                 await Setup();
@@ -89,7 +100,21 @@ public partial class Pods
                 StateHasChanged();
             }
         });
-        
+    }
 
+    public async Task DeletePodAsync(V1Pod pod)
+    {
+        var da = await CurrentK8SContextClient.Client.Client.DeleteNamespacedPodAsync(pod.Name(), pod.Namespace());
+        _ = InvokeAsync(async () =>
+        {
+            await Setup();
+            // await GetPodStatus(pod.Name(), pod.Namespace());
+            StateHasChanged();
+        });
+    }
+
+    public async Task GetPodStatus(string podName, string podNamespace)
+    {
+        var da = await CurrentK8SContextClient.Client.Client.ReadNamespacedPodStatusAsync(podName, podNamespace);
     }
 }
