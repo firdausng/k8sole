@@ -17,8 +17,14 @@
                         </div>
                     </ColumnOptions>
                 </PropertyColumn>
-                <PropertyColumn Title="Container" Property="@(c => c.Spec.Containers.Count)" Sortable="true" />
-                <PropertyColumn Title="Controlled By" Property="@(c => c.Metadata.OwnerReferences.First().Kind)" Sortable="true" />
+                <PropertyColumn Title="Container" Property="@(c => c.Spec.Containers.Count)" />
+                <PropertyColumn Title="Pod IPs" Property="@(c => c.Status.PodIP)" />
+                <TemplateColumn Title="Restart" Sortable="true">
+                    @foreach (var containerStatus in context.Status.ContainerStatuses)
+                    {
+                        <p>@containerStatus.RestartCount</p>
+                    }
+                </TemplateColumn>
                 <TemplateColumn Title="Actions">
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                         <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
@@ -36,7 +42,9 @@
                             </ul>
                         </div>
                     </div>
-                    <DetailSection DetailsData=@DetailsData DetailsTitle="Pods Detail" />
+
+                    <PodDetails Pod=@_selectedPod DetailsTitle="Pods Detail" />
+                    
 
                     <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
                         <div class="offcanvas-header">
@@ -55,7 +63,7 @@
                                 </li>*@
                             </ul>
                         </div>
-                        <div class="offcanvas-body small">
+                        <div class="offcanvas-body small overflow-scroll">
                            @if (!_podLogs.IsNullOrEmpty())
                            {
                                @foreach (var log in _podLogs)

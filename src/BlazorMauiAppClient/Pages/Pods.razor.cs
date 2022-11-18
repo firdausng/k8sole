@@ -29,21 +29,25 @@ public partial class Pods
 
     IQueryable<V1Pod>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
+    private V1Pod _selectedPod;
+    
     protected override async Task OnInitializedAsync()
     {
         await Setup();
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
-        {           
+        {
+            await Setup();
             _ = InvokeAsync(async () =>
             {
-                await Setup();
+                
                 StateHasChanged();
             });
         };
 
         K8sService.ActiveK8sContextChanged += async (s, e) =>
         {
+            
             _ = InvokeAsync(async () =>
             {
                 await Setup();
@@ -73,13 +77,17 @@ public partial class Pods
 
     public void ShowDetail(V1Pod pod)
     {
-        DetailsData.Add(new KeyValuePair<string, string>("Name", pod.Name()));
-        DetailsData.Add(new KeyValuePair<string, string>("Namespace", pod.Namespace()));
-        DetailsData.Add(new KeyValuePair<string, string>("Kind", pod.Kind));
-        DetailsData.Add(new KeyValuePair<string, string>("ApiGroup", pod.ApiGroup()));
-        DetailsData.Add(new KeyValuePair<string, string>("ApiVersion", pod.ApiVersion));
-        DetailsData.Add(new KeyValuePair<string, string>("CreationTimestamp", pod.CreationTimestamp().ToString()));
-        DetailsData.Add(new KeyValuePair<string, string>("DeletionTimestamp", pod.DeletionTimestamp().ToString()));
+        _selectedPod = pod;
+        DetailsData = new()
+        {
+            new KeyValuePair<string, string>("Name", pod.Name()),
+            new KeyValuePair<string, string>("Namespace", pod.Namespace()),
+            new KeyValuePair<string, string>("Kind", pod.Kind),
+            new KeyValuePair<string, string>("ApiGroup", pod.ApiGroup()),
+            new KeyValuePair<string, string>("ApiVersion", pod.ApiVersion),
+            new KeyValuePair<string, string>("CreationTimestamp", pod.CreationTimestamp().ToString()),
+            new KeyValuePair<string, string>("DeletionTimestamp", pod.DeletionTimestamp().ToString())
+        };
     }
 
     public async Task ShowPodLogsAsync(V1Pod pod)

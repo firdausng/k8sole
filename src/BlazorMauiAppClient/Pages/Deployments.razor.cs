@@ -1,5 +1,6 @@
 using AppCore.Services.K8s;
 using k8s;
+using k8s.KubeConfigModels;
 using k8s.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
@@ -20,14 +21,20 @@ public partial class Deployments
 
     IQueryable<V1Deployment>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
+    private int? _currentDeploymentReplicaCount;
+    private V1Deployment? _currentDeployment;
+
     protected override async Task OnInitializedAsync()
     {
         await Setup();
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {
-            await Setup();
-            _ = InvokeAsync(()=> StateHasChanged());
+            _ = InvokeAsync(async () =>
+            {
+                await Setup();
+                StateHasChanged();
+            });
         };
 
         K8sService.ActiveK8sContextChanged += async (s, e) =>
@@ -69,6 +76,29 @@ public partial class Deployments
         DetailsData.Add(new KeyValuePair<string, string>("CreationTimestamp", deployment.CreationTimestamp().ToString()));
         DetailsData.Add(new KeyValuePair<string, string>("DeletionTimestamp", deployment.DeletionTimestamp().ToString()));
     }
+
+    private async Task SetActiveDeployment(V1Deployment deployment)
+    {
+        _currentDeploymentReplicaCount = deployment?.Spec.Replicas.Value;
+        _currentDeployment = deployment;
+        _ = InvokeAsync(async () =>
+        {
+            StateHasChanged();
+        });
+    }   
+
+    // private Task UpdateActiveDeployment(V1Deployment deployment)
+    // {
+    //     var jsonPatch = new JsonPatchDocument<V1Scale>();
+    //     jsonPatch.ContractResolver = new DefaultContractResolver
+    //     {
+    //         NamingStrategy = new CamelCaseNamingStrategy()
+    //     };
+    //     jsonPatch.Replace(e => e.Spec.Replicas, request.Replicas);
+    //     var jsonPatchString = Newtonsoft.Json.JsonConvert.SerializeObject(jsonPatch);
+    //     var patch = new V1Patch(jsonPatchString, V1Patch.PatchType.JsonPatch);
+    //     var podlist = await CurrentK8SContextClient.Client.Client.PatchNamespacedDeploymentScaleAsync();
+    // }
 }
 
 public record DeploymentsPageVm(string Name, string Namespace, int Containers, int Restarts,
