@@ -1,86 +1,85 @@
 ﻿@page "/Pods"
 @using Microsoft.IdentityModel.Tokens
 
-<div class="container w-75">
-    <h2 class="col-12">Pods</h2>
-    <div class="col-12 vh-100">
-
-        <div class="grid">
-            <QuickGrid Items="@FilteredItems"
-                       ResizableColumns="true"
-                       Pagination="@pagination">
-                <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
-                <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
-                    <ColumnOptions>
-                        <div class="search-box">
-                            <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
-                        </div>
-                    </ColumnOptions>
-                </PropertyColumn>
-                <PropertyColumn Title="Container" Property="@(c => c.Spec.Containers.Count)" />
-                <PropertyColumn Title="Pod IPs" Property="@(c => c.Status.PodIP)" />
-                <TemplateColumn Title="Restart" Sortable="true">
-                    @foreach (var containerStatus in context.Status.ContainerStatuses)
-                    {
-                        <p>@containerStatus.RestartCount</p>
-                    }
-                </TemplateColumn>
-                <TemplateColumn Title="Actions">
-                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                        <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
-
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Attach Pods</button></li>
-                                <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Shell</button></li>
-                                <li><button @onclick="@(async ()=> await ShowPodLogsAsync(context))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Logs</button></li>
-                                <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Edit</button></li>
-                                <li><button @onclick="@(async ()=> await DeletePodAsync(context))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Delete</button></li>
-                            </ul>
-                        </div>
+<div class="col-12 vh-100">
+    <h4>Pods</h4>
+    <br />
+    <div class="grid">
+        <QuickGrid Items="@FilteredItems"
+                   ResizableColumns="true"
+                   Pagination="@pagination">
+            <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
                     </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Title="Container" Property="@(c => c.Spec.Containers.Count)" />
+            <PropertyColumn Title="Pod IPs" Property="@(c => c.Status.PodIP)" />
+            <TemplateColumn Title="Restart" Sortable="true">
+                @if (context.Status.ContainerStatuses != null)
+                {
+                    <p>@(string.Join(", ", context.Status.ContainerStatuses.Select(cs => cs.RestartCount)))</p>
+                }
 
-                    <PodDetails Pod=@_selectedPod DetailsTitle="Pods Detail" />
-                    
+            </TemplateColumn>
+            <TemplateColumn Title="Actions">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
 
-                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
-                        <div class="offcanvas-header">
-                            <ul class="nav nav-tabs">
-                                <li class="nav-item">
-                                    <button class="nav-link active" aria-current="page">Logs</button>
-                                </li>
-                                @*<li class="nav-item">
-                                    <a class="nav-link" href="#">Link</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Link</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                                </li>*@
-                            </ul>
-                        </div>
-                        <div class="offcanvas-body small overflow-scroll">
-                           @if (!_podLogs.IsNullOrEmpty())
-                           {
-                               @foreach (var log in _podLogs)
-                               {
-                                   <pre>@log</pre>
-                               }
-                           }
-                        </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Attach Pods</button></li>
+                            <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Shell</button></li>
+                            <li><button @onclick="@(async ()=> await ShowPodLogsAsync(context))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Logs</button></li>
+                            <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Edit</button></li>
+                            <li><button @onclick="@(async ()=> await DeletePodAsync(context))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Delete</button></li>
+                        </ul>
                     </div>
+                </div>
 
-                </TemplateColumn>
-            </QuickGrid>
-        </div>
-        <Paginator Value="@pagination" />
+                <PodDetails Pod=@_selectedPod DetailsTitle="Pods Detail" />
 
+
+                <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+                    <div class="offcanvas-header">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <button class="nav-link active" aria-current="page">Logs</button>
+                            </li>
+                            @*<li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                            </li>
+                            <li class="nav-item">
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                            </li>*@
+                        </ul>
+                    </div>
+                    <div class="offcanvas-body small overflow-scroll">
+                        @if (!_podLogs.IsNullOrEmpty())
+                        {
+                            @foreach (var log in _podLogs)
+                            {
+                                <pre>@log</pre>
+                            }
+                        }
+                    </div>
+                </div>
+
+            </TemplateColumn>
+        </QuickGrid>
     </div>
+    <Paginator Value="@pagination" />
 
 </div>
+
 
 

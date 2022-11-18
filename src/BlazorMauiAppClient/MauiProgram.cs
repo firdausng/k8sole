@@ -1,4 +1,5 @@
 ﻿using AppCore.Extensions;
+using BlazorMauiAppClient.Models;
 using Microsoft.Extensions.Logging;
 
 namespace BlazorMauiAppClient
@@ -22,6 +23,7 @@ namespace BlazorMauiAppClient
 #endif
 
             builder.Services.AddAppCore(builder.Configuration);
+            builder.Services.AddSingleton<SharedState>();
 
             return builder.Build();
         }

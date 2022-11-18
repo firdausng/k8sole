@@ -1,13 +1,58 @@
 ﻿
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
-        <h5 id="offcanvasRightLabel">@DetailsTitle</h5>
+        <h3 id="offcanvasRightLabel">@DetailsTitle</h3>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         @if (Pod is not null)
         {
             <div class="col-10 order-md-last">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Created</th>
+                            <td>@Pod.Metadata.CreationTimestamp</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Name</th>
+                            <td>@Pod.Metadata.Name</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Namespace</th>
+                            <td>@Pod.Metadata.NamespaceProperty</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Labels</th>
+                            <td>
+                                @foreach (var label in Pod.Metadata.Labels)
+                                {
+                                    <span class="badge bg-secondary me-2">@($"{label.Key}={label.Value}")</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Status</th>
+                            <td>@Pod.Status.Phase</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Conditions</th>
+                            <td>
+                                @foreach (var condition in Pod.Status.Conditions)
+                                {
+                                    <span class="badge bg-secondary me-2">@condition.Type</span>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
                 <h5 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">Container</span>
                     <span class="badge bg-primary rounded-pill">@Pod.Spec.Containers.Count</span>
@@ -27,7 +72,7 @@
                                     <h5>Resource Limit</h5>
                                     @foreach (var resourceLimit in container.Resources.Limits)
                                     {
-                                        <p>@resourceLimit.Key: @resourceLimit.Value</p>
+                                        <p class="overflow-auto">@resourceLimit.Key: @resourceLimit.Value</p>
                                     }
 
                                     <h5>Resource Request</h5>
@@ -37,18 +82,38 @@
                                     }
 
                                     <h5>Env Variables</h5>
-                                    @foreach (var env in container.Env)
-                                    {
-                                        @if (env.ValueFrom?.SecretKeyRef is null)
-                                        {
-                                            <p>@env.Name: @env.Value</p>
-                                        }else
-                                        {
-                                            <SecretData SecretName="@env.ValueFrom.SecretKeyRef.Name" Namespace="@Pod.Metadata.NamespaceProperty" SecretKey="@env.ValueFrom.SecretKeyRef.Key" />
-                                            @*<p>@env.Name: <span @ref="podSecretData" @onclick="@(()=>GetSecretAsync(env.ValueFrom.SecretKeyRef.Key, env.ValueFrom.SecretKeyRef.Name, Pod.Metadata.NamespaceProperty))">@env.ValueFrom.SecretKeyRef.Key</span></p>*@
-                                        }
-                                        
-                                    }
+                                    <table class="table overflow-scroll">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var env in container.Env)
+                                            {
+                                                @if (env.ValueFrom?.SecretKeyRef is null)
+                                                {
+                                                    <tr>
+                                                        <th scope="row">@env.Name</th>
+                                                        <td>@env.Value</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <th scope="row">@env.Name</th>
+                                                        <td><SecretData SecretName="@env.ValueFrom.SecretKeyRef.Name" Namespace="@Pod.Metadata.NamespaceProperty" SecretKey="@env.ValueFrom.SecretKeyRef.Key" /></td>
+                                                    </tr>
+                                                }
+                                                @*<SecretData SecretName="@env.ValueFrom.SecretKeyRef.Name" Namespace="@Pod.Metadata.NamespaceProperty" SecretKey="@env.ValueFrom.SecretKeyRef.Key" />*@
+                                                @*<p>@env.Name: <span @ref="podSecretData" @onclick="@(()=>GetSecretAsync(env.ValueFrom.SecretKeyRef.Key, env.ValueFrom.SecretKeyRef.Name, Pod.Metadata.NamespaceProperty))">@env.ValueFrom.SecretKeyRef.Key</span></p>*@
+
+                                            }
+
+                                        </tbody>
+                                    </table>
+
                                 </div>
                             </div>
                         </div>
@@ -60,6 +125,6 @@
         <p>@item.Key : @item.Value</p>
         }*@
         }
-        
+
     </div>
 </div>

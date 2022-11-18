@@ -21,10 +21,13 @@ public partial class Pods
     public IJSRuntime JS { get; set; }
 
     [Inject]
+    public SharedState SharedState { get; set; }
+
+    [Inject]
     public K8sService K8sService { get; set; }
 
     IQueryable<V1Pod>? items = Enumerable.Empty<V1Pod>().AsQueryable();
-    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+    PaginationState pagination = new PaginationState { ItemsPerPage = 15 };
     private StreamReader _logReader;
 
     IQueryable<V1Pod>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
@@ -58,6 +61,7 @@ public partial class Pods
 
     public async Task Setup()
     {
+        SharedState.CurrentPage = "Pods";
         if (CurrentK8SContextClient.ActiveNamespaceList.IsNullOrEmpty())
         {
             var podlist = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync("");
@@ -78,16 +82,6 @@ public partial class Pods
     public void ShowDetail(V1Pod pod)
     {
         _selectedPod = pod;
-        DetailsData = new()
-        {
-            new KeyValuePair<string, string>("Name", pod.Name()),
-            new KeyValuePair<string, string>("Namespace", pod.Namespace()),
-            new KeyValuePair<string, string>("Kind", pod.Kind),
-            new KeyValuePair<string, string>("ApiGroup", pod.ApiGroup()),
-            new KeyValuePair<string, string>("ApiVersion", pod.ApiVersion),
-            new KeyValuePair<string, string>("CreationTimestamp", pod.CreationTimestamp().ToString()),
-            new KeyValuePair<string, string>("DeletionTimestamp", pod.DeletionTimestamp().ToString())
-        };
     }
 
     public async Task ShowPodLogsAsync(V1Pod pod)

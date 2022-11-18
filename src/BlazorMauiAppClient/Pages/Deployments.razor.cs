@@ -1,7 +1,3 @@
-using AppCore.Services.K8s;
-using k8s;
-using k8s.KubeConfigModels;
-using k8s.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.IdentityModel.Tokens;
@@ -15,6 +11,9 @@ public partial class Deployments
     public CurrentK8SContext CurrentK8SContextClient { get; set; }
     [Inject]
     public K8sService K8sService { get; set; }
+
+    [Inject]
+    public SharedState SharedState { get; set; }
 
     IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
     PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
@@ -49,6 +48,7 @@ public partial class Deployments
 
     public async Task Setup()
     {
+        SharedState.CurrentPage = "Deployment";
         if (CurrentK8SContextClient.ActiveNamespaceList.IsNullOrEmpty())
         {
             var podlist = await CurrentK8SContextClient.Client.Client.ListDeploymentForAllNamespacesAsync();

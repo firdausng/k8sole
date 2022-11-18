@@ -1,76 +1,72 @@
 ﻿@page "/Deployments"
-<PageTitle>Test</PageTitle>
-<div class="container w-75">
-    <h2 class="col-9">Deployments</h2>
-    <div class="col-12 vh-100">
-
-        <div class="grid">
-            <QuickGrid 
-                Items="@FilteredItems" 
-                ResizableColumns="true" 
-                Pagination="@pagination"
-            >
-                <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
-                <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
-                    <ColumnOptions>
-                        <div class="search-box">
-                            <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
-                        </div>
-                    </ColumnOptions>
-                </PropertyColumn>
-                <PropertyColumn Title="Replicas" Property="@(c => c.Spec.Replicas.Value)" Sortable="true" />
-                <PropertyColumn Title="Conditions" Property="@(c => c.Status.Conditions.Count)" Sortable="true" />
-                <TemplateColumn Title="Actions">
-                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                        <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
-
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li>
-                                    <button @onclick="@(()=> SetActiveDeployment(context))" type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#scaleModal">
-                                        Scale
-                                    </button>
-                                </li>
-                                <li><a class="dropdown-item" href="#">Restart</a></li>
-                                <li><a class="dropdown-item" href="#">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
-                            </ul>
-                        </div>
+<div class="col-12 vh-100">
+    <h4>Deployment</h4>
+    <br />
+    <div class="grid">
+        <QuickGrid Items="@FilteredItems"
+                   ResizableColumns="true"
+                   Pagination="@pagination">
+            <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
                     </div>
-                    <DetailSection DetailsData=@DetailsData DetailsTitle="Deployment Detail"/>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Title="Replicas" Property="@(c => c.Spec.Replicas.Value)" Sortable="true" />
+            <PropertyColumn Title="Conditions" Property="@(c => c.Status.Conditions.Count)" Sortable="true" />
+            <TemplateColumn Title="Actions">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
 
-                    <div class="modal fade" id="scaleModal" tabindex="-1" aria-labelledby="scaleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Scale</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <label for="customRange1" class="form-label">Current replica scale: @_currentDeploymentReplicaCount</label>
-                                    <input type="range" class="form-range" min="0" max="100" id="customRange1" @bind="_currentDeploymentReplicaCount">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" 
-                                            @* @onclick="@(()=> UpdateActiveDeployment(context))"  *@
-                                            class="btn btn-primary">Save changes</button>
-                                </div>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li>
+                                <button @onclick="@(()=> SetActiveDeployment(context))" type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#scaleModal">
+                                    Scale
+                                </button>
+                            </li>
+                            <li><a class="dropdown-item" href="#">Restart</a></li>
+                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li><a class="dropdown-item" href="#">Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <DetailSection DetailsData=@DetailsData DetailsTitle="Deployment Detail" />
+
+                <div class="modal fade" id="scaleModal" tabindex="-1" aria-labelledby="scaleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Scale</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="customRange1" class="form-label">Current replica scale: @_currentDeploymentReplicaCount</label>
+                                <input type="range" class="form-range" min="0" max="100" id="customRange1" @bind="_currentDeploymentReplicaCount">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button"
+                                        @* @onclick="@(()=> UpdateActiveDeployment(context))" *@
+                                        class="btn btn-primary">
+                                    Save changes
+                                </button>
                             </div>
                         </div>
                     </div>
-                    
-                    
-                    @*<button @onclick="@(() => Fire(context))">Fire</button>*@
-                </TemplateColumn>
-            </QuickGrid>
-        </div>
-        <Paginator Value="@pagination" />
+                </div>
 
+
+                @*<button @onclick="@(() => Fire(context))">Fire</button>*@
+            </TemplateColumn>
+        </QuickGrid>
     </div>
+    <Paginator Value="@pagination" />
 
 </div>
 
