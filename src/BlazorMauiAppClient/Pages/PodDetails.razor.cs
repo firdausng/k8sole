@@ -7,8 +7,6 @@ using System.Text;
 namespace BlazorMauiAppClient.Pages;
 public partial class PodDetails
 {
-    private ElementReference podSecretData;
-
     [Parameter]
     public string DetailsTitle { get; set; } = "Detail";
 
