@@ -107,3 +107,8 @@ a, .btn-link {
     width: 99%;
     height: 75%;
 }
+
+
+.offcanvas.offcanvas-end {
+    --bs-offcanvas-width: 750px !important;
+}

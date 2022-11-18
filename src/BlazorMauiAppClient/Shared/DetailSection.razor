@@ -1,16 +1,33 @@
 ﻿
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
-        <h5 id="offcanvasRightLabel">@DetailsTitle</h5>
+        <h3 id="offcanvasRightLabel">@DetailsTitle</h3>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        @foreach (var item in DetailsData)
-        {
-            <p>@item.Key : @item.Value</p>
-        }
+        <div class="col-10 order-md-last">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in DetailsData)
+                    {
+                        <tr>
+                            <th scope="row">@item.Key</th>
+                            <td>@item.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
+
 
 @code {
 

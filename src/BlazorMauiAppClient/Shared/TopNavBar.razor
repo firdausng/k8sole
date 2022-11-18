@@ -1,21 +1,51 @@
 ﻿@using k8s.Models
-<div class="col-12">
-    <div class="d-flex justify-content-end p-3">
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <strong>@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)</strong>
+
+<header class=" border-bottom ">
+    <div class="container-fluid">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+                <img src="icons8-console-100.png" alt="mdo" class="" width="75" height="75">
             </a>
-            <ul class="dropdown-menu text-small shadow">
-                <li><a class="dropdown-item" href="#" @onclick="async()=>await ClearCurrentNamespace()">All</a></li>
-                <li><hr class="dropdown-divider"></li>
-                @foreach (var ns in _contextNamespaces)
-                {
-                    <li><button class="dropdown-item" @onclick="async()=>await UpdateCurrentNamespace(ns.Name())">@ns.Name()</button></li>
-                }
-            </ul>
+
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <strong>@_title</strong>
+                </a>
+                <ul class="dropdown-menu text-small shadow">
+                    @*<li><a class="dropdown-item" href="#">All</a></li>*@
+                    <li><hr class="dropdown-divider"></li>
+                    @foreach (var k8sContext in _k8sContextList)
+                    {
+                        <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                
+            </div>
+           
+
+            <div class="dropdown text-end">
+                <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <strong>@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)</strong>
+                </a>
+                <ul class="dropdown-menu text-small shadow">
+                    <li><a class="dropdown-item" href="#" @onclick="async()=>await ClearCurrentNamespace()">All</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    @foreach (var ns in _contextNamespaces)
+                    {
+                        <li>
+                            <label class="dropdown-item">
+                                <input class="form-check-input" type="checkbox" @onchange="async(eventArgs)=>await UpdateCurrentNamespace(ns.Name(), eventArgs.Value)">
+                                <label class="form-check-label" for="flexCheckChecked">
+                                    @ns.Name()
+                                </label>
+                            </label>
+                        </li>
+                    }
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-@code {
-
-}
+</header>

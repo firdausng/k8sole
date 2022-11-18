@@ -1,20 +1,6 @@
 ﻿@using k8s.Models
 
 <div style="width: 200px;">
-    <div class="dropdown">
-        <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <strong>@_title</strong>
-        </a>
-        <ul class="dropdown-menu text-small shadow">
-            @*<li><a class="dropdown-item" href="#">All</a></li>*@
-            <li><hr class="dropdown-divider"></li>
-            @foreach (var k8sContext in _k8sContextList)
-            {
-                <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button></li>
-            }
-        </ul>
-    </div>
-    <br />
     <ul class="list-unstyled ps-0">
         <li class="mb-1">
             <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
@@ -74,6 +60,9 @@
                     <li><NavLink href="#" class="link-dark d-inline-flex text-decoration-none rounded">Storage Classes</NavLink></li>
                 </ul>
             </div>
+        </li>
+        <li>
+            <NavLink href="Events" class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed">Events</NavLink>
         </li>
     </ul>
 </div>

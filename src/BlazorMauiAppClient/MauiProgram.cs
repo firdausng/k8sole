@@ -1,4 +1,5 @@
 ﻿using AppCore.Extensions;
+using BlazorMauiAppClient.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 using Microsoft.UI;
@@ -26,6 +27,7 @@ namespace BlazorMauiAppClient
 #endif
 
             builder.Services.AddAppCore(builder.Configuration);
+            builder.Services.AddSingleton<SharedState>();
 
 #if WINDOWS
             builder.ConfigureLifecycleEvents(events =>
