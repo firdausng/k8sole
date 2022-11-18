@@ -15,10 +15,19 @@
 
 <div class="container-fluid bg-white">
     <div class="row">
-        <NavMenu />
-        <main class="w-75">
-            @Body
-        </main>
+        <div class="col-11">
+            <TopNavBar></TopNavBar>
+        </div>
+    </div>
+    <div class="d-flex justify-content-left p-4">
+        <div class="">
+            <NavMenu />
+        </div>
+        <div class="">
+            <main class="">
+                @Body
+            </main>
+        </div>
 
     </div>
 </div>
