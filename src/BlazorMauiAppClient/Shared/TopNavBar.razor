@@ -72,7 +72,16 @@
                     <li><hr class="dropdown-divider"></li>
                     @foreach (var ns in _contextNamespaces)
                     {
-                        <li><button class="dropdown-item" @onclick="async()=>await UpdateCurrentNamespace(ns.Name())">@ns.Name()</button></li>
+                        <li>
+                            <label class="dropdown-item">
+                                <input class="form-check-input" type="checkbox" @onchange="async(eventArgs)=>await UpdateCurrentNamespace(ns.Name(), eventArgs.Value)">
+                                <label class="form-check-label" for="flexCheckChecked">
+                                    @ns.Name()
+                                </label>
+                                @*<button class="dropdown-item" @onclick="async()=>await UpdateCurrentNamespace(ns.Name())">@ns.Name()</button>*@
+                            </label>
+                            
+                        </li>
                     }
                 </ul>
             </div>

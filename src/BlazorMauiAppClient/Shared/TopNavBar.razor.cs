@@ -47,7 +47,7 @@ namespace BlazorMauiAppClient.Shared
             _contextNamespaces = await _namespaceService.GetAllAsync();
         }
 
-        private async Task UpdateCurrentNamespace(string name)
+        private async Task UpdateCurrentNamespace(string name, object checkedValue)
         {
             await _namespaceService.AddCurrentNamespaceAsync(name);
             var list = await _namespaceService.GetCurrentNamespaceListAsync();
