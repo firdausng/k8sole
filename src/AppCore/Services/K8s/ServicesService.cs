@@ -35,4 +35,15 @@ public class ServicesService
 
     }
 
+    public async Task<string> GetServiceYmlAsync(string name, string nameSpace)
+    {
+        var s = await _context.Client.Client!.CoreV1.ReadNamespacedServiceWithHttpMessagesAsync(name, nameSpace,true);
+        return KubernetesYaml.Serialize(s.Body);
+    }
+    public Task<string> GetServiceYmlAsync(V1Service service)
+    {
+        return Task.FromResult(KubernetesYaml.Serialize(service));
+    }
+
+
 }

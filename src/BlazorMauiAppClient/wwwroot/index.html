@@ -1,31 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-	<title>BlazorMauiAppClient</title>
-	<base href="/" />
-	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
-	<link href="css/app.css" rel="stylesheet" />
-	<link href="css/sidebars.css" rel="stylesheet" />
-	<link href="BlazorMauiAppClient.styles.css" rel="stylesheet" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>BlazorMauiAppClient</title>
+    <base href="/" />
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/sidebars.css" rel="stylesheet" />
+    <link href="BlazorMauiAppClient.styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 </head>
 
 <body>
 
-	<div class="status-bar-safe-area"></div>
+    <div class="status-bar-safe-area"></div>
 
-	<div id="app">Loading...</div>
+    <div id="app">Loading...</div>
 
-	<div id="blazor-error-ui">
-		An unhandled error has occurred.
-		<a href="" class="reload">Reload</a>
-		<a class="dismiss">🗙</a>
-	</div>
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
 
-	<script src="bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script>
+        var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
+
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/ace.js" integrity="sha512-IQmiIneKUJhTJElpHOlsrb3jpF7r54AzhCTi7BTDLiBVg0f7mrEqWVCmOeoqKv5hDdyf3rbbxBUgYf4u3O/QcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/mode-yaml.min.js" integrity="sha512-WcvQVyf7ECu3mkQRpaJJ2l05xJAIlFM1bscCbwduQBztxzoGUWqkAawsMdLr6tkD9ke4V6soIh6aufeAuW1ruw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/theme-solarized_dark.min.js" integrity="sha512-nRjqtF41IX21MzP+2WJh4CLnlb5AF4kLk5tsbxkrtdyEmNJz7JhCdT27e+6+GZtYU7lrTnvDhaGy2uGajT4MYw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+    <script>
+        function waitForElm(selector) {
+            return new Promise(resolve => {
+                if (document.querySelector(selector)) {
+                    return resolve(document.querySelector(selector));
+                }
+
+                const observer = new MutationObserver(mutations => {
+                    if (document.querySelector(selector)) {
+                        resolve(document.querySelector(selector));
+                        observer.disconnect();
+                    }
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
+        }
+        window.setYmlEditor = (id, yml) => {
+            //console.log("Test")
+            waitForElm('#' + id).then((elm) => {
+                //console.log("Test2")
+                //console.log(id)
+                //console.log(yml)
+                var editor = ace.edit(id, {
+                    mode: "ace/mode/yaml",
+                    fontSize: 15,
+                    printMargin: false,
+                    value: yml
+                });
+                editor.setTheme("ace/theme/solarized_dark");
+            });
+        };
+
+    </script>
 
 </body>
 

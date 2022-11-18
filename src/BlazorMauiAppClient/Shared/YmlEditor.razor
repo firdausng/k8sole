@@ -1,0 +1,13 @@
+﻿<div class="d-flex justify-content-end">
+    <div class="col-2 p-2">
+        <button type="button" class="btn btn-primary btn-sm px-3 mx-3">Save</button>
+        <button type="button" class="btn btn-secondary btn-sm px-3 mx-3">Close</button>
+    </div>
+</div>
+<div id="@(Id+Constants.YmlEditorExtension)" class="ymlEditor" ></div>
+
+@code{
+
+    [Parameter]
+    public string Id { get; set; }
+}

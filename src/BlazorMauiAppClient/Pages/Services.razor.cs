@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
 using AppCore.Services.K8s;
+using BlazorMauiAppClient.Shared;
 using BlazorMauiAppClient.ViewModels;
 using k8s.Models;
 using k8s;
@@ -58,6 +59,32 @@ public partial class Services
         //DetailsData.Add(new KeyValuePair<string, string>("ApiVersion", service.ApiVersion));
         //DetailsData.Add(new KeyValuePair<string, string>("CreationTimestamp", service.CreationTimestamp().ToString()));
         //DetailsData.Add(new KeyValuePair<string, string>("DeletionTimestamp", service.DeletionTimestamp().ToString()));
+    }
+
+    public async Task PopEditYmlAsync(V1ServiceVm service)
+    {
+        string yml = await ServicesService.GetServiceYmlAsync(service.Name, service.Namespace);
+        string id = GetId(service);
+        string editorId = id+Constants.YmlEditorExtension;
+        CurrentK8SContextClient.AddTabComponents(id, new ComponentMetadata()
+        {
+            Type = typeof(YmlEditor),
+            Name = GetName(service),
+            Parameters = new Dictionary<string, object>()
+                {
+                    { "Id", id },
+                }
+        });
+        await JS.InvokeVoidAsync("setYmlEditor", editorId, yml);
+    }
+
+    public string GetId(V1ServiceVm service)
+    {
+        return service.Namespace + "_services_" + service.Name;
+    }
+    public string GetName(V1ServiceVm service)
+    {
+        return "Service: " + service.Name;
     }
 }
 

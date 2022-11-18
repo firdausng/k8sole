@@ -1,4 +1,5 @@
 ﻿using AppCore.Services.K8s.Models;
+using BlazorMauiAppClient.ViewModels;
 
 namespace AppCore.Services.K8s;
 
@@ -7,11 +8,69 @@ public class CurrentK8SContext
     public K8SContextClient Client { get; set; }
 
     private List<V1Namespace> _activeNamespaceList = new List<V1Namespace>();
-    public IReadOnlyList<V1Namespace> ActiveNamespaceList  => _activeNamespaceList;
+    public IReadOnlyList<V1Namespace> ActiveNamespaceList => _activeNamespaceList;
 
     public event EventHandler ActiveNamespaceChanged;
-    
+
     public string NamespaceFilter { get; set; } = string.Empty;
+
+    private Dictionary<string, ComponentMetadata> _tabComponents = new();
+    public event EventHandler TabComponentsChanged;
+
+    public void ResetTabComponentActiveness()
+    {
+        foreach (var componentMetadata in _tabComponents)
+        {
+            componentMetadata.Value.Active = false;
+        }
+    }
+    public void AddTabComponents(string key, ComponentMetadata value)
+    {
+        ResetTabComponentActiveness();
+        bool exist = _tabComponents.TryGetValue(key, out var currentComponentMetadata);
+        if (!exist)
+        {
+            value.Active = true;
+            _tabComponents.Add(key, value);
+        }
+        else
+        {
+            currentComponentMetadata!.Active = true;
+        }
+        TabComponentsChanged?.Invoke(this, EventArgs.Empty);
+    }
+    public void RemoveTabComponents(string key)
+    {
+
+        bool reIndex = false;
+        if (_tabComponents[key].Active)
+        {
+            if (_tabComponents.Count > 1)
+                reIndex = true;
+        }
+        _tabComponents.Remove(key);
+        if (reIndex)
+        {
+            _tabComponents.Last().Value.Active = true;
+
+        }
+        TabComponentsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ActiveTabComponent(string key)
+    {
+        if (_tabComponents.ContainsKey(key))
+        {
+            ResetTabComponentActiveness();
+            _tabComponents[key].Active = true;
+        }
+    }
+
+    public IReadOnlyDictionary<string, ComponentMetadata> GetTabComponentMetadatas()
+    {
+        return _tabComponents;
+    }
+
 
     public void AddActiveNamespace(V1Namespace @namespace)
     {
