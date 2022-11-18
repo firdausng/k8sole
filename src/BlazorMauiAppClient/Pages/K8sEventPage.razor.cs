@@ -17,7 +17,7 @@ public partial class K8sEventPage
     public SharedState SharedState { get; set; }
 
     IQueryable<Corev1Event>? items = Enumerable.Empty<Corev1Event>().AsQueryable();
-    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
 
     IQueryable<Corev1Event>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 

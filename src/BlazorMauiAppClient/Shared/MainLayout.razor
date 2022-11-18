@@ -1,18 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
-<TopNavBar></TopNavBar>
+<div class="container-fluid">
+    <TopNavBar></TopNavBar>
 
-<div class="container-fluid bg-white">
-    <div class="d-flex justify-content-left p-4">
-        <div class="">
-            <NavMenu />
-        </div>
-        <div class="container-fluid">
-            <main>
+    <main class="p-3 border">
+        <div class="row">
+            <div class="col">
+                <NavMenu />
+            </div>
+            <div class="col">
                 @Body
-            </main>
+            </div>
         </div>
-
-    </div>
+    </main>
 </div>
+
 

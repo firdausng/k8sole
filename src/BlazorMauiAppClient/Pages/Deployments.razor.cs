@@ -1,3 +1,4 @@
+using k8s;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +17,7 @@ public partial class Deployments
     public SharedState SharedState { get; set; }
 
     IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
-    PaginationState pagination = new PaginationState { ItemsPerPage = 20 };
+    PaginationState pagination = new PaginationState { ItemsPerPage = 15 };
 
     IQueryable<V1Deployment>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
@@ -70,6 +71,13 @@ public partial class Deployments
     {
         DetailsData.Add(new KeyValuePair<string, string>("Name", deployment.Name()));
         DetailsData.Add(new KeyValuePair<string, string>("Namespace", deployment.Namespace()));
+        if(deployment.GetController() is not null)
+        {
+            DetailsData.Add(new KeyValuePair<string, string>("Controller Name", deployment.GetController().Name));
+            DetailsData.Add(new KeyValuePair<string, string>("Controller ApiVersion", deployment.GetController().ApiVersion));
+            DetailsData.Add(new KeyValuePair<string, string>("Controller Kind", deployment.GetController().Kind));
+        }
+        
         DetailsData.Add(new KeyValuePair<string, string>("Kind", deployment.Kind));
         DetailsData.Add(new KeyValuePair<string, string>("ApiGroup", deployment.ApiGroup()));
         DetailsData.Add(new KeyValuePair<string, string>("ApiVersion", deployment.ApiVersion));
@@ -86,6 +94,13 @@ public partial class Deployments
             StateHasChanged();
         });
     }   
+
+    private async Task ScaleDeployment(V1Deployment deployment)
+    {
+        var currentDeploymentScale = await CurrentK8SContextClient.Client.Client.ReadNamespacedDeploymentScaleAsync(deployment.Name(), deployment.Namespace());
+        currentDeploymentScale.Spec.Replicas = _currentDeploymentReplicaCount;
+        var newScale = await CurrentK8SContextClient.Client.Client.ReplaceNamespacedDeploymentScaleAsync(currentDeploymentScale, deployment.Name(), deployment.Namespace());
+    }
 }
 
 public record DeploymentsPageVm(string Name, string Namespace, int Containers, int Restarts,

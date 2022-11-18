@@ -1,6 +1,4 @@
 ﻿using AppCore.Services.K8s.Models;
-using AppCore.Services.K8s;
-using k8s.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorMauiAppClient.Shared
@@ -8,6 +6,7 @@ namespace BlazorMauiAppClient.Shared
     public partial class TopNavBar
     {
         private Dictionary<string, K8SContextClient> _k8sContextList;
+        private string _title = "No K8s Context";
         private IList<V1Namespace> _contextNamespaces = new List<V1Namespace>();
 
         [Inject]
@@ -25,8 +24,6 @@ namespace BlazorMauiAppClient.Shared
         [Inject]
         public SharedState SharedState { get; set; }
 
-        private readonly string _allNamespaceTitle = "All";
-
         private string _currentNamespaceList = string.Empty;
 
         protected override async Task OnInitializedAsync()
@@ -39,12 +36,6 @@ namespace BlazorMauiAppClient.Shared
             var list = await _namespaceService.GetCurrentNamespaceListAsync();
             _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
 
-        }
-
-        private async Task SetCurrentContext(KeyValuePair<string, K8SContextClient> k8sContextClient)
-        {
-            CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
-            _contextNamespaces = await _namespaceService.GetAllAsync();
         }
 
         private async Task UpdateCurrentNamespace(string name, object checkedValue)
@@ -61,6 +52,13 @@ namespace BlazorMauiAppClient.Shared
             var list = await _namespaceService.GetCurrentNamespaceListAsync();
             _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
             StateHasChanged();
+        }
+
+        private async Task SetCurrentContext(KeyValuePair<string, K8SContextClient> k8sContextClient)
+        {
+            CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
+            _title = k8sContextClient.Key;
+            _contextNamespaces = await _namespaceService.GetAllAsync();
         }
     }
 }
