@@ -86,19 +86,6 @@ public partial class Deployments
             StateHasChanged();
         });
     }   
-
-    // private Task UpdateActiveDeployment(V1Deployment deployment)
-    // {
-    //     var jsonPatch = new JsonPatchDocument<V1Scale>();
-    //     jsonPatch.ContractResolver = new DefaultContractResolver
-    //     {
-    //         NamingStrategy = new CamelCaseNamingStrategy()
-    //     };
-    //     jsonPatch.Replace(e => e.Spec.Replicas, request.Replicas);
-    //     var jsonPatchString = Newtonsoft.Json.JsonConvert.SerializeObject(jsonPatch);
-    //     var patch = new V1Patch(jsonPatchString, V1Patch.PatchType.JsonPatch);
-    //     var podlist = await CurrentK8SContextClient.Client.Client.PatchNamespacedDeploymentScaleAsync();
-    // }
 }
 
 public record DeploymentsPageVm(string Name, string Namespace, int Containers, int Restarts,

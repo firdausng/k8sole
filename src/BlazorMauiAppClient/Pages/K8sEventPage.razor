@@ -1,0 +1,35 @@
+﻿@page "/Events"
+
+<div class="col-12 vh-100">
+    <h4>Events</h4>
+    <br />
+    <div class="grid">
+        <QuickGrid Items="@FilteredItems"
+                   ResizableColumns="true"
+                   Pagination="@pagination">
+            <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <PropertyColumn Title="Message" Property="@(c => c.Message)" Sortable="true" />
+            <PropertyColumn Title="Count" Property="@(c => c.Count)" Sortable="true" />
+            <PropertyColumn Title="Reason" Property="@(c => c.Reason)" Sortable="true" />
+            <PropertyColumn Title="Type" Property="@(c => c.Type)" Sortable="true" />
+            <TemplateColumn Title="Actions">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
+                </div>
+                <DetailSection DetailsData=@DetailsData DetailsTitle="Events Objects Detail" />
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+    <Paginator Value="@pagination" />
+
+</div>
+
+
+
