@@ -41,18 +41,18 @@ public partial class Pods
             await Setup();
             StateHasChanged();
         });
-        _ = InvokeAsync(async () =>
-        {
-            var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(10));
-            while (await periodicTimer.WaitForNextTickAsync())
-            {
-                _ = InvokeAsync(async () =>
-                {
-                    await Setup();
-                    StateHasChanged();
-                });
-            }
-        });
+        //_ = InvokeAsync(async () =>
+        //{
+        //    var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+        //    while (await periodicTimer.WaitForNextTickAsync())
+        //    {
+        //        _ = InvokeAsync(async () =>
+        //        {
+        //            await Setup();
+        //            StateHasChanged();
+        //        });
+        //    }
+        //});
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {

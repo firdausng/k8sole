@@ -83,3 +83,10 @@ namespace BlazorMauiAppClient.Shared
         }
     }
 }
+
+
+public class TopNavBarNamespace
+{
+    public bool Selected { get; set; }
+    public V1Namespace Namespace { get; set; }
+}
