@@ -30,7 +30,7 @@
             </div>
 
 
-            <div class="dropdown text-end">
+            <div class="dropstart text-end">
                 <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)" aria-label="Search" disabled>
                 </a>
@@ -50,9 +50,9 @@
                     {
                         <li>
                             <label class="dropdown-item">
-                                <input class="form-check-input" type="checkbox" @onchange="async (eventArgs) => await UpdateCurrentNamespace(ns.Name(), eventArgs.Value)">
+                                <input checked="@ns.Selected" class="form-check-input" type="checkbox" @onchange="async (eventArgs) => await UpdateCurrentNamespace(ns.Namespace.Name(), eventArgs.Value)">
                                 <label class="form-check-label" for="flexCheckChecked">
-                                    @ns.Name()
+                                    @ns.Namespace.Name()
                                 </label>
                             </label>
                         </li>
