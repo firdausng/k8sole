@@ -17,5 +17,11 @@ using AppCore.Services.K8s;
 namespace BlazorMauiAppClient.Shared;
  public partial class MainLayout
 {
-    
+    [Inject]
+    IJSRuntime JS { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
 }

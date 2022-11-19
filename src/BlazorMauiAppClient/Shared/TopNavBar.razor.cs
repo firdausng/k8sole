@@ -31,7 +31,7 @@ namespace BlazorMauiAppClient.Shared
             _k8sContextList = K8sService.GetAllContexts();
             if (_k8sContextList != null)
             {
-                await SetCurrentContext(_k8sContextList.First());
+                await SetCurrentContext(_k8sContextList.First(c => c.Value.ContextName.Contains("sci-aksc-weu-02", StringComparison.OrdinalIgnoreCase)));
             }
             var list = await _namespaceService.GetCurrentNamespaceListAsync();
             _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
