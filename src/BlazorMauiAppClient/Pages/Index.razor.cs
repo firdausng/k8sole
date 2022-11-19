@@ -41,10 +41,9 @@ public partial class Index
 
     public async Task Setup()
     {
-        
         try
         {
-            _nodeMetric = await CurrentK8SContextClient.Client.Client.GetKubernetesNodesMetricsAsync();
+            //_nodeMetric = await CurrentK8SContextClient.Client.Client.GetKubernetesNodesMetricsAsync();
             _podeMetric = await CurrentK8SContextClient.Client.Client.GetKubernetesPodsMetricsAsync();
         }
         catch (Exception e)

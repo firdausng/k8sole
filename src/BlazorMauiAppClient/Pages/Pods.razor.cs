@@ -36,14 +36,30 @@ public partial class Pods
     
     protected override async Task OnInitializedAsync()
     {
-        await Setup();
+        _ = InvokeAsync(async () =>
+        {
+            await Setup();
+            StateHasChanged();
+        });
+        _ = InvokeAsync(async () =>
+        {
+            var periodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+            while (await periodicTimer.WaitForNextTickAsync())
+            {
+                _ = InvokeAsync(async () =>
+                {
+                    await Setup();
+                    StateHasChanged();
+                });
+            }
+        });
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {
-            await Setup();
+            
             _ = InvokeAsync(async () =>
             {
-                
+                await Setup();
                 StateHasChanged();
             });
         };
@@ -59,6 +75,8 @@ public partial class Pods
         };
     }
 
+
+
     public async Task Setup()
     {
         SharedState.CurrentPage = "Pods";
@@ -69,13 +87,23 @@ public partial class Pods
         }
         else
         {
-            var list = new List<V1Pod>();
+            var listTasks = new List<Task<V1PodList>>();
             foreach (var k8sNamespace in CurrentK8SContextClient.ActiveNamespaceList)
             {
-                var podlist = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(k8sNamespace.Name());
-                list.AddRange(podlist.Items);
+                var podlist = CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(k8sNamespace.Name());
+                listTasks.Add(podlist);
             }
-            items = list.AsQueryable();
+
+            await Task.WhenAll(listTasks);
+
+            List<V1Pod> podList = new List<V1Pod>();
+            foreach (var getPodListTask in listTasks)
+            {
+                var nsPodList = await getPodListTask;
+                podList.AddRange(nsPodList.Items);
+            }
+
+            items = podList.AsQueryable();
         }
     }
 

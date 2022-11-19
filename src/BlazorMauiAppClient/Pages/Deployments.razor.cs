@@ -26,7 +26,11 @@ public partial class Deployments
 
     protected override async Task OnInitializedAsync()
     {
-        await Setup();
+        _ = InvokeAsync(async () =>
+        {
+            await Setup();
+            StateHasChanged();
+        });
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {

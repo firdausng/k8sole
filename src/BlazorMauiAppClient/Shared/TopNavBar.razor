@@ -13,31 +13,44 @@
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     @*<li><a class="dropdown-item" href="#">All</a></li>*@
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     @foreach (var k8sContext in _k8sContextList)
                     {
-                        <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button></li>
+                        <li>
+                            <button class="dropdown-item" @onclick="() => SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button>
+                        </li>
                     }
                 </ul>
             </div>
 
             <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                
+
             </div>
-           
+
 
             <div class="dropdown text-end">
                 <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <strong>@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)</strong>
+                    <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)" aria-label="Search" disabled>
                 </a>
                 <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#" @onclick="async()=>await ClearCurrentNamespace()">All</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    @foreach (var ns in _contextNamespaces)
+                    <li>
+                        <label class="dropdown-item">
+                            <input @oninput="async (eventArgs) => await SearchNamespace(eventArgs.Value)" class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
+                        </label>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" @onclick="async () => await ClearCurrentNamespace()">All</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    @foreach (var ns in _filterContextNamespaces)
                     {
                         <li>
                             <label class="dropdown-item">
-                                <input class="form-check-input" type="checkbox" @onchange="async(eventArgs)=>await UpdateCurrentNamespace(ns.Name(), eventArgs.Value)">
+                                <input class="form-check-input" type="checkbox" @onchange="async (eventArgs) => await UpdateCurrentNamespace(ns.Name(), eventArgs.Value)">
                                 <label class="form-check-label" for="flexCheckChecked">
                                     @ns.Name()
                                 </label>
@@ -49,25 +62,3 @@
         </div>
     </div>
 </header>
-
-@*<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
-</button>*@
-
-<div class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>

@@ -1,5 +1,6 @@
 ﻿using AppCore.Services.K8s.Models;
 using Microsoft.AspNetCore.Components;
+using System.Linq;
 
 namespace BlazorMauiAppClient.Shared
 {
@@ -8,6 +9,7 @@ namespace BlazorMauiAppClient.Shared
         private Dictionary<string, K8SContextClient> _k8sContextList;
         private string _title = "No K8s Context";
         private IList<V1Namespace> _contextNamespaces = new List<V1Namespace>();
+        private IList<V1Namespace> _filterContextNamespaces = new List<V1Namespace>();
 
         [Inject]
         public CurrentK8SContext CurrentK8SContextClient { get; set; }
@@ -29,6 +31,7 @@ namespace BlazorMauiAppClient.Shared
         protected override async Task OnInitializedAsync()
         {
             _k8sContextList = K8sService.GetAllContexts();
+            
             if (_k8sContextList != null)
             {
                 await SetCurrentContext(_k8sContextList.First(c => c.Value.ContextName.Contains("sci-aksc-weu-02", StringComparison.OrdinalIgnoreCase)));
@@ -37,6 +40,23 @@ namespace BlazorMauiAppClient.Shared
             _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
 
         }
+
+        private async Task SearchNamespace(object checkedValue)
+        {
+            if (checkedValue != null)
+            {
+                var query = checkedValue as string;
+                _filterContextNamespaces = _contextNamespaces
+                    .Where(c => c.Name().Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                StateHasChanged();
+            }
+            //await _namespaceService.AddCurrentNamespaceAsync(name);
+            //var list = await _namespaceService.GetCurrentNamespaceListAsync();
+            //_currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
+            
+        }
+
 
         private async Task UpdateCurrentNamespace(string name, object checkedValue)
         {
@@ -59,6 +79,7 @@ namespace BlazorMauiAppClient.Shared
             CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
             _title = k8sContextClient.Key;
             _contextNamespaces = await _namespaceService.GetAllAsync();
+            _filterContextNamespaces = _contextNamespaces;
         }
     }
 }
