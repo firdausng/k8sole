@@ -41,8 +41,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/mode-yaml.min.js" integrity="sha512-WcvQVyf7ECu3mkQRpaJJ2l05xJAIlFM1bscCbwduQBztxzoGUWqkAawsMdLr6tkD9ke4V6soIh6aufeAuW1ruw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/theme-solarized_dark.min.js" integrity="sha512-nRjqtF41IX21MzP+2WJh4CLnlb5AF4kLk5tsbxkrtdyEmNJz7JhCdT27e+6+GZtYU7lrTnvDhaGy2uGajT4MYw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.13.1/theme-terminal.min.js" integrity="sha512-r9Qpwgdp1gzLQgGRxOGPZF4EUPFdA1I7lyyP9WToxUkQk0v7iLTqFZYeFMDzS8R2yEQ6NPFUeo1mmsVgs22ANw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script>
+<script>
         function waitForElm(selector) {
             return new Promise(resolve => {
                 if (document.querySelector(selector)) {
@@ -62,20 +63,66 @@
                 });
             });
         }
-        window.setYmlEditor = (id, yml) => {
-            //console.log("Test")
+        window.setYmlEditor = (id, yml, readOnlyMode) => {
             waitForElm('#' + id).then((elm) => {
-                //console.log("Test2")
-                //console.log(id)
-                //console.log(yml)
                 var editor = ace.edit(id, {
                     mode: "ace/mode/yaml",
                     fontSize: 15,
                     printMargin: false,
                     value: yml,
-                    scrollPastEnd: true
+                    scrollPastEnd: true,
+                    readOnly: readOnlyMode
                 });
                 editor.setTheme("ace/theme/solarized_dark");
+            });
+        };
+        window.setPodLogViewer = (id, logs) => {
+            waitForElm('#' + id).then((elm) => {
+                var editor = ace.edit(id, {
+                    mode: "ace/mode/log",
+                    fontSize: 15,
+                    printMargin: false,
+                    scrollPastEnd: true,
+                    value: logs,
+                    readOnly: true,
+                    showGutter: true,
+                    hScrollBarAlwaysVisible: true,
+                    wrapBehavioursEnabled: true
+                    //autoScrollEditorIntoView: true
+                });
+                editor.setTheme("ace/theme/terminal");
+            //    editor.session.setWrapLimit(40);
+            //    editor.session.AdjustWrapLimit(40);
+            });
+        };
+        window.AppendPodLog = (id, lines) => {
+            waitForElm('#' + id).then((elm) => {
+                //console.log(line)
+
+                var editor = ace.edit(id);
+                var cLineNo = editor.session.getLength()
+                editor.session.insert({
+                    row: cLineNo,
+                    column: 0
+                }, lines)
+
+                var nLineNo = editor.session.getLength();
+                if (nLineNo - 5 > 0)
+                    nLineNo -= 5;
+                editor.gotoLine(nLineNo)
+                //var cv = editor.getValue()
+                //editor.setValue(cv + "\n" + line)
+                //editor.clearSelection()
+                //console.log(editor.session.getLength())
+                //editor.session.AdjustWrapLimit(40);
+
+                //editor.navigateFileEnd()
+                //var lc = editor.session.getRowLineCount();
+                //console.log(lc)
+                //editor.scrollPageDown()
+                //editor.gotoPageDown()
+                //    var bottomRow = editor.getScrollBottomRow()
+                //    editor.scrollToRow(bottomRow)
             });
         };
 

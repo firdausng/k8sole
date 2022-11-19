@@ -1,14 +1,10 @@
 ﻿using AppCore.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
-using AppCore.Services.K8s;
-using BlazorMauiAppClient.Shared;
 using BlazorMauiAppClient.ViewModels;
-using k8s.Models;
-using k8s;
+using BlazorMauiAppClient.YmlEditor;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.JSInterop;
-using Microsoft.Maui.Controls.Shapes;
 
 namespace BlazorMauiAppClient.Pages;
 public partial class Services
@@ -29,8 +25,12 @@ public partial class Services
 
     IQueryable<V1ServiceVm>? FilteredItems => items?.Where(x => x.Namespace.Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
+    internal YmlEditorPopper YmlEditorPopper;
+
+
     protected override async Task OnInitializedAsync()
     {
+        YmlEditorPopper = new YmlEditorPopper("Service", CurrentK8SContextClient, JS, ServicesService);
         await Setup();
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
@@ -59,32 +59,6 @@ public partial class Services
         //DetailsData.Add(new KeyValuePair<string, string>("ApiVersion", service.ApiVersion));
         //DetailsData.Add(new KeyValuePair<string, string>("CreationTimestamp", service.CreationTimestamp().ToString()));
         //DetailsData.Add(new KeyValuePair<string, string>("DeletionTimestamp", service.DeletionTimestamp().ToString()));
-    }
-
-    public async Task PopEditYmlAsync(V1ServiceVm service)
-    {
-        string yml = await ServicesService.GetServiceYmlAsync(service.Name, service.Namespace);
-        string id = GetId(service);
-        string editorId = id+Constants.YmlEditorExtension;
-        CurrentK8SContextClient.AddTabComponents(id, new ComponentMetadata()
-        {
-            Type = typeof(YmlEditor),
-            Name = GetName(service),
-            Parameters = new Dictionary<string, object>()
-                {
-                    { "Id", id },
-                }
-        });
-        await JS.InvokeVoidAsync("setYmlEditor", editorId, yml);
-    }
-
-    public string GetId(V1ServiceVm service)
-    {
-        return service.Namespace + "_services_" + service.Name;
-    }
-    public string GetName(V1ServiceVm service)
-    {
-        return "Service: " + service.Name;
     }
 }
 

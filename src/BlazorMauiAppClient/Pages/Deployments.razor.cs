@@ -1,7 +1,9 @@
+using BlazorMauiAppClient.YmlEditor;
 using k8s;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.JSInterop;
 
 namespace BlazorMauiAppClient.Pages;
 public partial class Deployments
@@ -16,6 +18,9 @@ public partial class Deployments
     [Inject]
     public SharedState SharedState { get; set; }
 
+    [Inject] private DeploymentService _deploymentService { get; set; }
+    [Inject] private IJSRuntime _jsRuntime { get; set; }
+
     IQueryable<V1Deployment>? items = Enumerable.Empty<V1Deployment>().AsQueryable();
     PaginationState pagination = new PaginationState { ItemsPerPage = 15 };
 
@@ -24,8 +29,12 @@ public partial class Deployments
     private int? _currentDeploymentReplicaCount;
     private V1Deployment? _currentDeployment;
 
+    private YmlEditorPopper _ymlEditorPopper;
+
     protected override async Task OnInitializedAsync()
     {
+        _ymlEditorPopper = new YmlEditorPopper("Deployment", CurrentK8SContextClient, _jsRuntime, _deploymentService);
+
         await Setup();
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>

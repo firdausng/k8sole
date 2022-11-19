@@ -13,6 +13,8 @@ public static class DependencyInjectionExtension
         services.AddSingleton<CurrentK8SContext>();
         services.AddSingleton<NamespaceService>();
         services.AddSingleton<ServicesService>();
+        services.AddSingleton<PodService>();
+        services.AddSingleton<DeploymentService>();
 
         return services;
     }

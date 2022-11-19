@@ -31,7 +31,9 @@
                                 </button>
                             </li>
                             <li><a class="dropdown-item" href="#">Restart</a></li>
-                            <li><a class="dropdown-item" href="#">Edit</a></li>
+                            <li>
+                                <button @onclick="async () => await _ymlEditorPopper.PopEditYmlAsync(new YmlQuery(context.Name(), context.Namespace()))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#bottomBar" aria-controls="bottomBar">Edit</button>
+                            </li>
                             <li><a class="dropdown-item" href="#">Delete</a></li>
                         </ul>
                     </div>

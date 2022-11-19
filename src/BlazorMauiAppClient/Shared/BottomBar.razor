@@ -1,11 +1,12 @@
-﻿<div class="offcanvas offcanvas-bottom h-50" tabindex="-1 " id="bottomBar" aria-labelledby="offcanvasBottomLabel">
+﻿@using AppCore.Extensions
+<div class="offcanvas offcanvas-bottom h-50" tabindex="-1 " id="bottomBar" aria-labelledby="offcanvasBottomLabel">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         @foreach (var component in CurrentContext.GetTabComponentMetadatas())
         {
 
             <li class="nav-item" role="presentation">
                 <div class="nav-link @(component.Value.Active?"active":"") d-inline-block" id="@component.Key-tab" data-bs-toggle="tab" data-bs-target="#@component.Key" type="button" role="tab" aria-controls="@component.Key" aria-selected="true" @onclick="()=>CurrentContext.ActiveTabComponent(component.Key)">
-                    @component.Value.Name<a class="closeTab d-inline-block" href="" @onclick="()=>CurrentContext.RemoveTabComponents(component.Key)">✕</a>
+                    @component.Value.Name.Truncate(30)<a class="closeTab d-inline-block" href="" @onclick="()=>CurrentContext.RemoveTabComponents(component.Key)">✕</a>
                 </div>
             </li>
         }

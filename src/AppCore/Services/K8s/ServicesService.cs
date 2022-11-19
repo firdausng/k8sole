@@ -1,8 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using AppCore.Services.K8s.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AppCore.Services.K8s;
 
-public class ServicesService
+public class ServicesService : IYmlCrud
 {
     private readonly CurrentK8SContext _context;
 
@@ -35,12 +36,18 @@ public class ServicesService
 
     }
 
-    public async Task<string> GetServiceYmlAsync(string name, string nameSpace)
+    public async Task<string> GetYmlAsync(string name, string nameSpace)
     {
-        var s = await _context.Client.Client!.CoreV1.ReadNamespacedServiceWithHttpMessagesAsync(name, nameSpace,true);
-        return KubernetesYaml.Serialize(s.Body);
+        var s = await _context.Client.Client!.CoreV1.ReadNamespacedServiceAsync(name, nameSpace, true);
+        return KubernetesYaml.Serialize(s);
     }
-    public Task<string> GetServiceYmlAsync(V1Service service)
+
+    public Task<string> UpdateYmlAsync(string name, string nameSpace, string updatedYml)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<string> GetYmlAsync(V1Service service)
     {
         return Task.FromResult(KubernetesYaml.Serialize(service));
     }

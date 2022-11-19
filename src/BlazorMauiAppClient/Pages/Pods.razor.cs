@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
 using AppCore.Services.K8s;
+using BlazorMauiAppClient.YmlEditor;
 using k8s.Models;
 using k8s;
 using Microsoft.IdentityModel.Tokens;
@@ -33,9 +34,18 @@ public partial class Pods
     IQueryable<V1Pod>? FilteredItems => items?.Where(x => x.Metadata.Namespace().Contains(CurrentK8SContextClient.NamespaceFilter, StringComparison.CurrentCultureIgnoreCase));
 
     private V1Pod _selectedPod;
+
+    [Inject]
+    internal PodService PodService { get; set; }
+
+    private YmlEditorPopper _ymlEditorPopper;
+    private PodLogPopper _podLogPopper;
     
     protected override async Task OnInitializedAsync()
     {
+        _ymlEditorPopper = new YmlEditorPopper("Pod", CurrentK8SContextClient, JS, PodService,true);
+        _podLogPopper = new PodLogPopper(CurrentK8SContextClient, JS, PodService);
+
         await Setup();
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
@@ -64,7 +74,7 @@ public partial class Pods
         SharedState.CurrentPage = "Pods";
         if (CurrentK8SContextClient.ActiveNamespaceList.IsNullOrEmpty())
         {
-            var podlist = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync("");
+            var podlist = await Task.Run(async()=>await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(""));
             items = podlist.Items.AsQueryable();
         }
         else
@@ -72,7 +82,7 @@ public partial class Pods
             var list = new List<V1Pod>();
             foreach (var k8sNamespace in CurrentK8SContextClient.ActiveNamespaceList)
             {
-                var podlist = await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(k8sNamespace.Name());
+                var podlist = await Task.Run(async()=> await CurrentK8SContextClient.Client.Client.CoreV1.ListNamespacedPodAsync(k8sNamespace.Name()));
                 list.AddRange(podlist.Items);
             }
             items = list.AsQueryable();
@@ -84,25 +94,25 @@ public partial class Pods
         _selectedPod = pod;
     }
 
-    public async Task ShowPodLogsAsync(V1Pod pod)
-    {
-        _podLogs = new();
-        var response = await CurrentK8SContextClient.Client.Client.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(
-                pod.Metadata.Name,
-                pod.Metadata.NamespaceProperty, container: pod.Spec.Containers[0].Name, follow: true, sinceSeconds: 50_000, timestamps: true).ConfigureAwait(false);
-        _logReader = new StreamReader(response.Body);
-        var line = string.Empty;
-        _ = InvokeAsync(async () =>
-        {
+    //public async Task ShowPodLogsAsync(V1Pod pod)
+    //{
+    //    _podLogs = new();
+    //    var response = await CurrentK8SContextClient.Client.Client.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(
+    //            pod.Metadata.Name,
+    //            pod.Metadata.NamespaceProperty, container: pod.Spec.Containers[0].Name, follow: true, sinceSeconds: 50_000, timestamps: true).ConfigureAwait(false);
+    //    _logReader = new StreamReader(response.Body);
+    //    var line = string.Empty;
+    //    _ = InvokeAsync(async () =>
+    //    {
             
-            while ((line = await _logReader.ReadLineAsync()) != null)
-            {
-                _podLogs.Add(line);
-                // Update the UI
-                StateHasChanged();
-            }
-        });
-    }
+    //        while ((line = await _logReader.ReadLineAsync()) != null)
+    //        {
+    //            _podLogs.Add(line);
+    //            // Update the UI
+    //            StateHasChanged();
+    //        }
+    //    });
+    //}
 
     public async Task DeletePodAsync(V1Pod pod)
     {
