@@ -34,8 +34,11 @@ public partial class Deployments
     protected override async Task OnInitializedAsync()
     {
         _ymlEditorPopper = new YmlEditorPopper("Deployment", CurrentK8SContextClient, _jsRuntime, _deploymentService);
-
-        await Setup();
+        _ = InvokeAsync(async () =>
+        {
+            await Setup();
+            StateHasChanged();
+        });
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {

@@ -1,5 +1,6 @@
 ﻿using AppCore.Services.K8s.Models;
 using Microsoft.AspNetCore.Components;
+using System.Linq;
 
 namespace BlazorMauiAppClient.Shared
 {
@@ -7,7 +8,8 @@ namespace BlazorMauiAppClient.Shared
     {
         private Dictionary<string, K8SContextClient> _k8sContextList;
         private string _title = "No K8s Context";
-        private IList<V1Namespace> _contextNamespaces = new List<V1Namespace>();
+        private IList<TopNavBarNamespace> _contextNamespaces = new List<TopNavBarNamespace>();
+        private IList<TopNavBarNamespace> _filterContextNamespaces = new List<TopNavBarNamespace>();
 
         [Inject]
         public CurrentK8SContext CurrentK8SContextClient { get; set; }
@@ -29,21 +31,47 @@ namespace BlazorMauiAppClient.Shared
         protected override async Task OnInitializedAsync()
         {
             _k8sContextList = K8sService.GetAllContexts();
+            
             if (_k8sContextList != null)
             {
-                await SetCurrentContext(_k8sContextList.First());
+                await SetCurrentContext(_k8sContextList.First(c => c.Value.ContextName.Contains("sci-aksc-weu-02", StringComparison.OrdinalIgnoreCase)));
             }
             var list = await _namespaceService.GetCurrentNamespaceListAsync();
             _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
 
         }
 
+        private async Task SearchNamespace(object checkedValue)
+        {
+            if (checkedValue != null)
+            {
+                var query = checkedValue as string;
+                _filterContextNamespaces = _contextNamespaces
+                    .Where(c => c.Namespace.Name().Contains(query, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+                StateHasChanged();
+            }
+            //await _namespaceService.AddCurrentNamespaceAsync(name);
+            //var list = await _namespaceService.GetCurrentNamespaceListAsync();
+            //_currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
+            
+        }
+
+
         private async Task UpdateCurrentNamespace(string name, object checkedValue)
         {
-            await _namespaceService.AddCurrentNamespaceAsync(name);
-            var list = await _namespaceService.GetCurrentNamespaceListAsync();
-            _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
-            StateHasChanged();
+            var selectedNamespace = _contextNamespaces.FirstOrDefault(n => n.Namespace.Name().Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (checkedValue is bool selected)
+            {
+                await _namespaceService.AddCurrentNamespaceAsync(name);
+                if (selectedNamespace is not null)
+                {
+                    selectedNamespace.Selected = selected;
+                    var list = await _namespaceService.GetCurrentNamespaceListAsync();
+                    _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
+                    StateHasChanged();
+                }
+            }
         }
 
         private async Task ClearCurrentNamespace()
@@ -58,7 +86,22 @@ namespace BlazorMauiAppClient.Shared
         {
             CurrentK8SContextClient.Client = K8sService.GetK8sContext(k8sContextClient.Key);
             _title = k8sContextClient.Key;
-            _contextNamespaces = await _namespaceService.GetAllAsync();
+            var @namespaceList = await _namespaceService.GetAllAsync();
+            _contextNamespaces = @namespaceList.Select(n => new TopNavBarNamespace(n, false)).ToList();
+            _filterContextNamespaces = _contextNamespaces;
         }
     }
+}
+
+
+public class TopNavBarNamespace
+{
+    public TopNavBarNamespace(V1Namespace ns, bool selected)
+    {
+        Namespace = ns;
+        Selected = selected;
+    }
+
+    public bool Selected { get; set; }
+    public V1Namespace Namespace { get; set; }
 }

@@ -26,7 +26,11 @@ public partial class K8sEventPage
 
     protected override async Task OnInitializedAsync()
     {
-        await Setup();
+        _ = InvokeAsync(async () =>
+        {
+            await Setup();
+            StateHasChanged();
+        });
 
         CurrentK8SContextClient.ActiveNamespaceChanged += async (s, e) =>
         {
@@ -81,3 +85,4 @@ public partial class K8sEventPage
         DetailsData.Add(new KeyValuePair<string, string>("InvolvedObject FieldPath", k8sEvent.InvolvedObject.FieldPath));
     }
 }
+

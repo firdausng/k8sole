@@ -1,10 +1,38 @@
 ﻿@page "/"
 
 <div class="col-12 vh-100">
-        <div class="p-4 p-md-5 mb-4 rounded text-bg-dark">
-            <div class="col-md-6 px-0">
-                <h1 class="display-4 fst-italic">K8sole</h1>
-                <p class="lead my-3">tools to manage your k8s cluster.</p>
-            </div>
+    <div class="p-4 p-md-5 mb-4 rounded text-bg-dark">
+        <div class="col-md-6 px-0">
+            <h1 class="display-4 fst-italic">K8sole</h1>
+            <p class="lead my-3">tools to manage your k8s cluster.</p>
         </div>
+    </div>
+    <div>
+        @if (_podeMetric is not null)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            @foreach (var nodeMetrics in _podeMetric.Items)
+            {
+                <tbody>
+                    @foreach (var container in nodeMetrics.Containers)
+                    {
+                        <tr>
+                            <th scope="row">@nodeMetrics.Metadata.Name</th>
+                            <td>@(string.Join(", ", container.Usage.Select(usage => $"{usage.Key}: {usage.Value}")))</td>
+                        </tr>
+                    }
+                </tbody>
+            }
+        }
+
+    </div>
 </div>

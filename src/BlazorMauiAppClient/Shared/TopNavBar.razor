@@ -13,33 +13,46 @@
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     @*<li><a class="dropdown-item" href="#">All</a></li>*@
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     @foreach (var k8sContext in _k8sContextList)
                     {
-                        <li><button class="dropdown-item" @onclick="()=>SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button></li>
+                        <li>
+                            <button class="dropdown-item" @onclick="() => SetCurrentContext(k8sContext)">@k8sContext.Value.ContextName</button>
+                        </li>
                     }
                 </ul>
             </div>
 
             <div class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                
-            </div>
-           
 
-            <div class="dropdown text-end">
+            </div>
+
+
+            <div class="dropstart text-end">
                 <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <strong>@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)</strong>
+                    <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="@(string.IsNullOrEmpty(_currentNamespaceList) ? "All" : _currentNamespaceList)" aria-label="Search" disabled>
                 </a>
                 <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#" @onclick="async()=>await ClearCurrentNamespace()">All</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    @foreach (var ns in _contextNamespaces)
+                    <li>
+                        <label class="dropdown-item">
+                            <input @oninput="async (eventArgs) => await SearchNamespace(eventArgs.Value)" class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
+                        </label>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" @onclick="async () => await ClearCurrentNamespace()">All</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    @foreach (var ns in _filterContextNamespaces)
                     {
                         <li>
                             <label class="dropdown-item">
-                                <input class="form-check-input" type="checkbox" @onchange="async(eventArgs)=>await UpdateCurrentNamespace(ns.Name(), eventArgs.Value)">
+                                <input checked="@ns.Selected" class="form-check-input" type="checkbox" @onchange="async (eventArgs) => await UpdateCurrentNamespace(ns.Namespace.Name(), eventArgs.Value)">
                                 <label class="form-check-label" for="flexCheckChecked">
-                                    @ns.Name()
+                                    @ns.Namespace.Name()
                                 </label>
                             </label>
                         </li>

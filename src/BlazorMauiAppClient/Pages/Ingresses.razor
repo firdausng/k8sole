@@ -1,0 +1,64 @@
+﻿@page "/Ingresses"
+
+<div class="col-12 vh-100">
+    <h4>Ingresses</h4>
+    <br />
+    <div class="grid">
+        <QuickGrid Items="@FilteredItems"
+                   ResizableColumns="true"
+                   Pagination="@pagination">
+            <PropertyColumn Title="Name" Property="@(c => c.Metadata.Name)" Sortable="true" />
+            <PropertyColumn Title="Namespace" Property="@(c => c.Metadata.NamespaceProperty)" Sortable="true">
+                <ColumnOptions>
+                    <div class="search-box">
+                        <input type="search" autofocus @bind="CurrentK8SContextClient.NamespaceFilter" @bind:event="oninput" placeholder="pod name..." />
+                    </div>
+                </ColumnOptions>
+            </PropertyColumn>
+            <TemplateColumn Title="Load Balancer">
+                <div>
+                    @foreach (var loadBalancer in context.Status.LoadBalancer.Ingress)
+                    {
+                        <p>@((loadBalancer.Hostname is null) ? loadBalancer.Ip : loadBalancer.Hostname)</p>
+                    }
+                </div>
+            </TemplateColumn>
+            <TemplateColumn Title="Rules">
+                <div>
+                    @foreach (var rule in context.Spec.Rules)
+                    {
+                        @foreach (var path in rule.Http.Paths)
+                        {
+                            <p>
+                                <a target="_blank" href="http://@($"{rule.Host}{path.Path}")">@($"{rule.Host}{path.Path}")</a>
+                            </p>
+                        }
+                        
+                    }
+                </div>
+            </TemplateColumn>
+            <PropertyColumn Title="Creation Timestamp" Property="@(c => c.Metadata.CreationTimestamp)" Sortable="true" />
+            <TemplateColumn Title="Actions">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <button @onclick="@(()=>ShowDetail(context))" class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Detail</button>
+
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><button class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Edit</button></li>
+                            <li><button @onclick="@(async ()=> await DeleteIngressAsync(context))" class="dropdown-item" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Delete</button></li>
+                        </ul>
+                    </div>
+                </div>
+
+                
+                
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+    <Paginator Value="@pagination" />
+    <DetailSection DetailsData=@DetailsData DetailsTitle="V1Ingress Detail" />
+
+</div>
