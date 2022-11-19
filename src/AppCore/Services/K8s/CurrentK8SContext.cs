@@ -27,7 +27,7 @@ public class CurrentK8SContext
     public void AddTabComponents(string key, ComponentMetadata value)
     {
         ResetTabComponentActiveness();
-        bool exist = _tabComponents.TryGetValue(key, out var currentComponentMetadata);
+        var exist = _tabComponents.TryGetValue(key, out var currentComponentMetadata);
         if (!exist)
         {
             value.Active = true;
@@ -41,8 +41,7 @@ public class CurrentK8SContext
     }
     public void RemoveTabComponents(string key)
     {
-
-        bool reIndex = false;
+        var reIndex = false;
         if (_tabComponents[key].Active)
         {
             if (_tabComponents.Count > 1)

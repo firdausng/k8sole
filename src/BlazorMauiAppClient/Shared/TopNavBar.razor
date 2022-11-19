@@ -36,13 +36,27 @@
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     <li>
+                        <a class="dropdown-item" href="#" @onclick="async () => await ClearCurrentNamespace()">All</a>
+                    </li>
+                    <li>
                         <label class="dropdown-item">
                             <input @oninput="async (eventArgs) => await SearchNamespace(eventArgs.Value)" class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
                         </label>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#" @onclick="async () => await ClearCurrentNamespace()">All</a>
+                        <hr class="dropdown-divider">
                     </li>
+                    @foreach (var ns in _enabledContextNamespaces)
+                    {
+                        <li>
+                            <label class="dropdown-item">
+                                <input checked="@ns.Selected" class="form-check-input" type="checkbox" @onchange="async (eventArgs) => await UpdateCurrentNamespace(ns.Namespace.Name(), eventArgs.Value)">
+                                <label class="form-check-label" for="flexCheckChecked">
+                                    @ns.Namespace.Name()
+                                </label>
+                            </label>
+                        </li>
+                    }
                     <li>
                         <hr class="dropdown-divider">
                     </li>

@@ -3,10 +3,10 @@
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         @foreach (var component in CurrentContext.GetTabComponentMetadatas())
         {
-
             <li class="nav-item" role="presentation">
-                <div class="nav-link @(component.Value.Active?"active":"") d-inline-block" id="@component.Key-tab" data-bs-toggle="tab" data-bs-target="#@component.Key" type="button" role="tab" aria-controls="@component.Key" aria-selected="true" @onclick="()=>CurrentContext.ActiveTabComponent(component.Key)">
-                    @component.Value.Name.Truncate(30)<a class="closeTab d-inline-block" href="" @onclick="()=>CurrentContext.RemoveTabComponents(component.Key)">✕</a>
+                <div class="nav-link @(component.Value.Active ? "active" : "") d-inline-block" id="@component.Key-tab" data-bs-toggle="tab" data-bs-target="#@component.Key" type="button" role="tab" aria-controls="@component.Key" aria-selected="true" @onclick="() => CurrentContext.ActiveTabComponent(component.Key)">
+                    @component.Value.Name.Truncate(30)
+                    <p class="closeTab d-inline-block" @onclick="() => CurrentContext.RemoveTabComponents(component.Key)">✕</p>
                 </div>
             </li>
         }
@@ -14,7 +14,7 @@
     <div class="tab-content" id="myTabContent">
         @foreach (var component in CurrentContext.GetTabComponentMetadatas())
         {
-            <div class="tab-pane fade show @(component.Value.Active?"active":"")" id="@component.Key" role="tabpanel" aria-labelledby="@component.Key-tab">
+            <div class="tab-pane fade show @(component.Value.Active ? "active" : "")" id="@component.Key" role="tabpanel" aria-labelledby="@component.Key-tab">
                 <DynamicComponent Type="@component.Value.Type" Parameters="@component.Value.Parameters"></DynamicComponent>
             </div>
         }
