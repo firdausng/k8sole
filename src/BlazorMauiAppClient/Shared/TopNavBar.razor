@@ -46,7 +46,7 @@
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    @foreach (var ns in _enabledContextNamespaces)
+                    @foreach (var ns in _contextNamespaces.Where(n => n.Selected))
                     {
                         <li>
                             <label class="dropdown-item">

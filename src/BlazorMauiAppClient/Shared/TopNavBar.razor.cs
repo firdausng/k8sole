@@ -10,7 +10,6 @@ namespace BlazorMauiAppClient.Shared
         private string _title = "No K8s Context";
         private IList<TopNavBarNamespace> _contextNamespaces = new List<TopNavBarNamespace>();
         private IList<TopNavBarNamespace> _filterContextNamespaces = new List<TopNavBarNamespace>();
-        private IList<TopNavBarNamespace> _enabledContextNamespaces = new List<TopNavBarNamespace>();
 
         [Inject]
         public CurrentK8SContext CurrentK8SContextClient { get; set; }
@@ -66,7 +65,6 @@ namespace BlazorMauiAppClient.Shared
                     selectedNamespace.Selected = selected;
                     var list = await _namespaceService.GetCurrentNamespaceListAsync();
                     _currentNamespaceList = string.Join(", ", list.Select(n => n.Metadata.Name));
-                    _enabledContextNamespaces = list.Select(n => new TopNavBarNamespace(n, selected)).ToList();
                     StateHasChanged();
                 }
             }
@@ -87,7 +85,6 @@ namespace BlazorMauiAppClient.Shared
             var @namespaceList = await _namespaceService.GetAllAsync();
             _contextNamespaces = @namespaceList.Select(n => new TopNavBarNamespace(n, false)).ToList();
             _filterContextNamespaces = _contextNamespaces;
-            _enabledContextNamespaces = _filterContextNamespaces;
         }
     }
 }
